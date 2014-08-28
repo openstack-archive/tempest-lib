@@ -17,8 +17,8 @@
 
 import re
 
-from tempest import exceptions
-from tempest.openstack.common import log as logging
+from tempest_lib import exceptions
+from tempest_lib.openstack.common import log as logging
 
 
 LOG = logging.getLogger(__name__)
