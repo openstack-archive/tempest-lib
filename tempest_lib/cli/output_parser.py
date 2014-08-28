@@ -36,8 +36,8 @@ def details_multiple(output_lines, with_label=False):
     items = []
     tables_ = tables(output_lines)
     for table_ in tables_:
-        if 'Property' not in table_['headers'] \
-           or 'Value' not in table_['headers']:
+        if ('Property' not in table_['headers']
+            or 'Value' not in table_['headers']):
             raise exceptions.InvalidStructure()
         item = {}
         for value in table_['values']:
@@ -55,8 +55,7 @@ def details(output_lines, with_label=False):
 
 
 def listing(output_lines):
-    """Return list of dicts with basic item info parsed from cli output.
-    """
+    """Return list of dicts with basic item info parsed from cli output."""
 
     items = []
     table_ = table(output_lines)

@@ -17,13 +17,13 @@ import testtools
 
 
 class TempestException(Exception):
-    """
-    Base Tempest Exception
+    """Base Tempest Exception.
 
     To correctly use this class, inherit from it and define
     a 'message' property. That message will get printf'd
     with the keyword arguments provided to the constructor.
     """
+
     message = "An unknown exception occurred"
 
     def __init__(self, *args, **kwargs):
