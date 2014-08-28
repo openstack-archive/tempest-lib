@@ -180,17 +180,6 @@ class CLIClientBase(object):
         return execute(cmd, action, flags, params, fail_ok, merge_stderr,
                        self.cli_dir)
 
-    def assertTableStruct(self, items, field_names):
-        """Verify that all items has keys listed in field_names."""
-        for item in items:
-            for field in field_names:
-                self.assertIn(field, item)
-
-    def assertFirstLineStartsWith(self, lines, beginning):
-        self.assertTrue(lines[0].startswith(beginning),
-                        msg=('Beginning of first line has invalid content: %s'
-                             % lines[:3]))
-
 
 class ClientTestBase(base.BaseTestCase):
 
@@ -201,3 +190,14 @@ class ClientTestBase(base.BaseTestCase):
 
     def _get_clients(self):
         raise NotImplementedError
+
+    def assertTableStruct(self, items, field_names):
+        """Verify that all items has keys listed in field_names."""
+        for item in items:
+            for field in field_names:
+                self.assertIn(field, item)
+
+    def assertFirstLineStartsWith(self, lines, beginning):
+        self.assertTrue(lines[0].startswith(beginning),
+                        msg=('Beginning of first line has invalid content: %s'
+                             % lines[:3]))
