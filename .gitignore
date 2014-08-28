@@ -22,7 +22,8 @@ lib64
 pip-log.txt
 
 # Unit test / coverage reports
-.coverage
+.coverage*
+!.coveragerc
 .tox
 nosetests.xml
 .testrepository
@@ -49,3 +50,6 @@ ChangeLog
 # Editors
 *~
 .*.swp
+
+#Broken migrations
+tempest
