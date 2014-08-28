@@ -20,6 +20,7 @@ import subprocess
 
 import testtools
 
+from tempest_lib import base
 import tempest_lib.cli.output_parser
 from tempest_lib import exceptions
 from tempest_lib.openstack.common import log as logging
@@ -92,7 +93,6 @@ class CLIClientBase(object):
     def __init__(self, username='', password='', tenant_name='', uri='',
                  cli_dir='', *args, **kwargs):
         super(CLIClientBase, self).__init__()
-        self.parser = tempest_lib.cli.output_parser
         self.cli_dir = cli_dir if cli_dir else '/usr/bin'
         self.username = username
         self.tenant_name = tenant_name
@@ -190,3 +190,14 @@ class CLIClientBase(object):
         self.assertTrue(lines[0].startswith(beginning),
                         msg=('Beginning of first line has invalid content: %s'
                              % lines[:3]))
+
+
+class ClientTestBase(base.BaseTestCase):
+
+    def setUp(self):
+        super(ClientTestBase, self).setUp()
+        self.clients = self._get_clients()
+        self.parser = tempest_lib.cli.output_parser
+
+    def _get_clients(self):
+        raise NotImplementedError
