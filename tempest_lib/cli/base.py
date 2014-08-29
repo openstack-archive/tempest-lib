@@ -13,18 +13,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import functools
 import logging
 import os
 import shlex
 import subprocess
 
-import testtools
-
 from tempest_lib import base
 import tempest_lib.cli.output_parser
 from tempest_lib import exceptions
-from tempest_lib.openstack.common import versionutils
 
 
 LOG = logging.getLogger(__name__)
@@ -49,44 +45,6 @@ def execute(cmd, action, flags='', params='', fail_ok=False,
                                        result,
                                        result_err)
     return result
-
-
-def check_client_version(client, version):
-    """Checks if the client's version is compatible with the given version
-
-    @param client: The client to check.
-    @param version: The version to compare against.
-    @return: True if the client version is compatible with the given version
-             parameter, False otherwise.
-    """
-    current_version = execute(client, '', params='--version',
-                              merge_stderr=True)
-
-    if not current_version.strip():
-        raise exceptions.TempestException('"%s --version" output was empty' %
-                                          client)
-
-    return versionutils.is_compatible(version, current_version,
-                                      same_major=False)
-
-
-def min_client_version(*args, **kwargs):
-    """A decorator to skip tests if the client used isn't of the right version.
-
-    @param client: The client command to run. For python-novaclient, this is
-                   'nova', for python-cinderclient this is 'cinder', etc.
-    @param version: The minimum version required to run the CLI test.
-    """
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*func_args, **func_kwargs):
-            if not check_client_version(kwargs['client'], kwargs['version']):
-                msg = "requires %s client version >= %s" % (kwargs['client'],
-                                                            kwargs['version'])
-                raise testtools.TestCase.skipException(msg)
-            return func(*func_args, **func_kwargs)
-        return wrapper
-    return decorator
 
 
 class CLIClientBase(object):
