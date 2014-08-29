@@ -68,7 +68,8 @@ class CLIClientBase(object):
                     merge_stderr=False):
         """Executes nova-manage command for the given action."""
         return execute(
-            'nova-manage', action, flags, params, fail_ok, merge_stderr)
+            'nova-manage', action, flags, params, fail_ok, merge_stderr,
+            self.cli_dir)
 
     def keystone(self, action, flags='', params='', fail_ok=False):
         """Executes keystone command for the given action."""
