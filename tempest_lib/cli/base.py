@@ -57,12 +57,12 @@ class CLIClientBase(object):
         self.password = password
         self.uri = uri
 
-    def nova(self, action, flags='', params='', admin=True, fail_ok=False,
+    def nova(self, action, flags='', params='', fail_ok=False,
              endpoint_type='publicURL'):
         """Executes nova command for the given action."""
         flags += ' --endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'nova', action, flags, params, admin, fail_ok)
+            'nova', action, flags, params, fail_ok)
 
     def nova_manage(self, action, flags='', params='', fail_ok=False,
                     merge_stderr=False):
@@ -70,59 +70,59 @@ class CLIClientBase(object):
         return execute(
             'nova-manage', action, flags, params, fail_ok, merge_stderr)
 
-    def keystone(self, action, flags='', params='', admin=True, fail_ok=False):
+    def keystone(self, action, flags='', params='', fail_ok=False):
         """Executes keystone command for the given action."""
         return self.cmd_with_auth(
-            'keystone', action, flags, params, admin, fail_ok)
+            'keystone', action, flags, params, fail_ok)
 
-    def glance(self, action, flags='', params='', admin=True, fail_ok=False,
+    def glance(self, action, flags='', params='', fail_ok=False,
                endpoint_type='publicURL'):
         """Executes glance command for the given action."""
         flags += ' --os-endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'glance', action, flags, params, admin, fail_ok)
+            'glance', action, flags, params, fail_ok)
 
-    def ceilometer(self, action, flags='', params='', admin=True,
+    def ceilometer(self, action, flags='', params='',
                    fail_ok=False, endpoint_type='publicURL'):
         """Executes ceilometer command for the given action."""
         flags += ' --os-endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'ceilometer', action, flags, params, admin, fail_ok)
+            'ceilometer', action, flags, params, fail_ok)
 
-    def heat(self, action, flags='', params='', admin=True,
+    def heat(self, action, flags='', params='',
              fail_ok=False, endpoint_type='publicURL'):
         """Executes heat command for the given action."""
         flags += ' --os-endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'heat', action, flags, params, admin, fail_ok)
+            'heat', action, flags, params, fail_ok)
 
-    def cinder(self, action, flags='', params='', admin=True, fail_ok=False,
+    def cinder(self, action, flags='', params='', fail_ok=False,
                endpoint_type='publicURL'):
         """Executes cinder command for the given action."""
         flags += ' --endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'cinder', action, flags, params, admin, fail_ok)
+            'cinder', action, flags, params, fail_ok)
 
-    def swift(self, action, flags='', params='', admin=True, fail_ok=False,
+    def swift(self, action, flags='', params='', fail_ok=False,
               endpoint_type='publicURL'):
         """Executes swift command for the given action."""
         flags += ' --os-endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'swift', action, flags, params, admin, fail_ok)
+            'swift', action, flags, params, fail_ok)
 
-    def neutron(self, action, flags='', params='', admin=True, fail_ok=False,
+    def neutron(self, action, flags='', params='', fail_ok=False,
                 endpoint_type='publicURL'):
         """Executes neutron command for the given action."""
         flags += ' --endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'neutron', action, flags, params, admin, fail_ok)
+            'neutron', action, flags, params, fail_ok)
 
-    def sahara(self, action, flags='', params='', admin=True,
+    def sahara(self, action, flags='', params='',
                fail_ok=False, merge_stderr=True, endpoint_type='publicURL'):
         """Executes sahara command for the given action."""
         flags += ' --endpoint-type %s' % endpoint_type
         return self.cmd_with_auth(
-            'sahara', action, flags, params, admin, fail_ok, merge_stderr)
+            'sahara', action, flags, params, fail_ok, merge_stderr)
 
     def cmd_with_auth(self, cmd, action, flags='', params='',
                       fail_ok=False, merge_stderr=False):
