@@ -52,6 +52,12 @@ def validate_tearDownClass():
 class BaseTestCase(BaseDeps):
     setUpClassCalled = False
 
+    # NOTE(sdague): log_format is defined inline here instead of using the oslo
+    # default because going through the config path recouples config to the
+    # stress tests too early, and depending on testr order will fail unit tests
+    log_format = ('%(asctime)s %(process)d %(levelname)-8s '
+                  '[%(name)s] %(message)s')
+
     @classmethod
     def setUpClass(cls):
         if hasattr(super(BaseTestCase, cls), 'setUpClass'):
