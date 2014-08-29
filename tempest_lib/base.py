@@ -13,14 +13,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
 import os
 import sys
 
 import fixtures
 import testresources
 import testtools
-
-from tempest_lib.openstack.common import log as logging
 
 LOG = logging.getLogger(__name__)
 

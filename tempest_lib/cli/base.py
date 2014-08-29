@@ -14,6 +14,7 @@
 #    under the License.
 
 import functools
+import logging
 import os
 import shlex
 import subprocess
@@ -23,7 +24,6 @@ import testtools
 from tempest_lib import base
 import tempest_lib.cli.output_parser
 from tempest_lib import exceptions
-from tempest_lib.openstack.common import log as logging
 from tempest_lib.openstack.common import versionutils
 
 
