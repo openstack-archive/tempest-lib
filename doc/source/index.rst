@@ -15,6 +15,15 @@ Contents:
    installation
    usage
    contributing
+   cli
+
+Release Notes
+=============
+
+0.0.1
+-----
+ * Adds cli testing framework
+
 
 Indices and tables
 ==================
