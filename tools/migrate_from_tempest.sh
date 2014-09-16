@@ -1,16 +1,15 @@
 #!/bin/bash
 #
-# Use this script to move over a set of files from tempest master with commit
-# history into the tempest lib. You must only do this for files that haven't
-# been migrated over already.
-# 
+# Use this script to move over a set of files from tempest master into
+# tempest-lib with the commit history for the files in the commit message.
+# This should only be done for files that haven't been migrated over already.
 # To use:
 #  1. Create a new branch in the tempest-lib repo so not to destroy your current
 #     working branch
 #  2. Run the script from the repo dir and specify the file paths relative to
 #     the root tempest dir(only code and unit tests):
 #
-#   tools/migrate_from_tempest.sh tempest/
+#   tools/migrate_from_tempest.sh tempest/file.py tempest/sub_dir
 
 
 function usage {
@@ -62,7 +61,7 @@ for file in $files; do
          if git merge-base --is-ancestor $root $file_root; then
              fail=1
              break
-         elif !git merge-base --is-ancestor $file_root $root; then
+         elif ! git merge-base --is-ancestor $file_root $root; then
              new_roots="$new_roots $root"
          fi
      done
@@ -95,22 +94,34 @@ fi
 EOF
 )
 
+# Prune just the commits relevant to what is being migrated
 git filter-branch --index-filter "$pruner" --parent-filter "$set_roots" --commit-filter "$skip_empty" HEAD
 
-# Pull changes
-cd -
-git remote add tempest-migrate $tmpdir
-git pull tempest-migrate master
-git remote rm tempest-migrate
+SHA1_LIST=`git log --oneline`
 
+# Move files and commit
+cd -
+file_list=''
 for file in $files; do
     filename=`basename $file`
     if [ -n "$output_dir" ]; then
-        git mv $file "$output_dir/$filename"
+        dest_file="$output_dir/$filename"
     else
-        git mv $file "tempest_lib/$filename"
+        dest_file="tempest_lib/$filename"
+    fi
+    cp -r "$tmpdir/$file" "$dest_file"
+    git add "$dest_file"
+    if [[ -z "$file_list" ]]; then
+        file_list="$filename"
+    else
+        file_list="$file_list, $filename"
     fi
 done
-rm -r tempest
-git add .
-git commit -m "Moved files from previous merge as part of tempest migration"
+# Cleanup temporary tempest repo
+rm -rf $tmpdir
+
+# Generate a migration commit
+commit_message="Migrated $file_list from tempest"
+pre_list=$"This migrates the above files from tempest. This includes tempest commits:"
+post_list=$"to see the commit history for these files refer to the above sha1s in the tempest repository"
+git commit -m "$commit_message" -m "$pre_list" -m "$SHA1_LIST" -m "$post_list"
