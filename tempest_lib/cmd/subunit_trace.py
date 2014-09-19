@@ -236,12 +236,12 @@ def main():
         result.stopTestRun()
     if count_tests('status', '.*') == 0:
         print("The test run didn't actually run any tests")
-        return 1
+        exit(1)
     if args.post_fails:
         print_fails(sys.stdout)
     print_summary(sys.stdout)
-    return (0 if summary.wasSuccessful() else 1)
+    exit(0 if summary.wasSuccessful() else 1)
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

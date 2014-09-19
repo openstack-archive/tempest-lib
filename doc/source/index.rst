@@ -23,6 +23,7 @@ Release Notes
 0.0.1
 -----
  * Adds cli testing framework
+ * Adds subunit-trace
 
 
 Indices and tables
