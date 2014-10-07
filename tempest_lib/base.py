@@ -39,15 +39,6 @@ else:
                    unittest2.TestCase):
         pass
 
-at_exit_set = set()
-
-
-def validate_tearDownClass():
-    if at_exit_set:
-        LOG.error("tearDownClass does not call the super's "
-                  "tearDownClass in these classes: \n"
-                  + str(at_exit_set))
-
 
 class BaseTestCase(BaseDeps):
     setUpClassCalled = False
@@ -66,7 +57,6 @@ class BaseTestCase(BaseDeps):
 
     @classmethod
     def tearDownClass(cls):
-        at_exit_set.discard(cls)
         if hasattr(super(BaseTestCase, cls), 'tearDownClass'):
             super(BaseTestCase, cls).tearDownClass()
 
@@ -76,7 +66,6 @@ class BaseTestCase(BaseDeps):
             raise RuntimeError("setUpClass does not calls the super's"
                                "setUpClass in the "
                                + self.__class__.__name__)
-        at_exit_set.add(self.__class__)
         test_timeout = os.environ.get('OS_TEST_TIMEOUT', 0)
         try:
             test_timeout = int(test_timeout)
