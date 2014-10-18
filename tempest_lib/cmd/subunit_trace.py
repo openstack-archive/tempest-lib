@@ -19,6 +19,7 @@
 """Trace a subunit stream in reasonable detail and high accuracy."""
 
 import argparse
+import datetime
 import functools
 import re
 import sys
@@ -186,13 +187,14 @@ def worker_stats(worker):
     return num_tests, delta
 
 
-def print_summary(stream):
+def print_summary(stream, elapsed_time):
     stream.write("\n======\nTotals\n======\n")
-    stream.write("Run: %s in %s sec.\n" % (count_tests('status', '.*'),
-                                           run_time()))
+    stream.write("Ran: %s tests in %.4f sec.\n" % (
+        count_tests('status', '.*'), elapsed_time.total_seconds()))
     stream.write(" - Passed: %s\n" % count_tests('status', 'success'))
     stream.write(" - Skipped: %s\n" % count_tests('status', 'skip'))
     stream.write(" - Failed: %s\n" % count_tests('status', 'fail'))
+    stream.write("Sum of execute time for each test: %.4f sec.\n" % run_time())
 
     # we could have no results, especially as we filter out the process-codes
     if RESULTS:
@@ -229,17 +231,21 @@ def main():
                           print_failures=args.print_failures))
     summary = testtools.StreamSummary()
     result = testtools.CopyStreamResult([outcomes, summary])
+    start_time = datetime.datetime.utcnow()
     result.startTestRun()
     try:
         stream.run(result)
     finally:
         result.stopTestRun()
+    stop_time = datetime.datetime.utcnow()
+    elapsed_time = stop_time - start_time
+
     if count_tests('status', '.*') == 0:
         print("The test run didn't actually run any tests")
         exit(1)
     if args.post_fails:
         print_fails(sys.stdout)
-    print_summary(sys.stdout)
+    print_summary(sys.stdout, elapsed_time)
     exit(0 if summary.wasSuccessful() else 1)
 
 
