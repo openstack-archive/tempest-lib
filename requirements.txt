@@ -3,4 +3,3 @@ Babel>=1.3
 fixtures>=0.3.14
 oslo.config>=1.4.0.0a3
 iso8601>=0.1.9
-testresources>=0.2.4

@@ -15,32 +15,14 @@
 
 import logging
 import os
-import sys
 
 import fixtures
-import testresources
 import testtools
 
 LOG = logging.getLogger(__name__)
 
 
-if sys.version_info >= (2, 7):
-    class BaseDeps(testtools.TestCase,
-                   testtools.testcase.WithAttributes,
-                   testresources.ResourcedTestCase):
-        pass
-else:
-    # Define asserts for py26
-    import unittest2
-
-    class BaseDeps(testtools.TestCase,
-                   testtools.testcase.WithAttributes,
-                   testresources.ResourcedTestCase,
-                   unittest2.TestCase):
-        pass
-
-
-class BaseTestCase(BaseDeps):
+class BaseTestCase(testtools.testcase.WithAttributes, testtools.TestCase):
     setUpClassCalled = False
 
     # NOTE(sdague): log_format is defined inline here instead of using the oslo
