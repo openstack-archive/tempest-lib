@@ -21,6 +21,7 @@
 import argparse
 import datetime
 import functools
+import os
 import re
 import sys
 
@@ -103,7 +104,7 @@ def print_attachments(stream, test, all_channels=False):
                 stream.write("    %s\n" % line)
 
 
-def show_outcome(stream, test, print_failures=False):
+def show_outcome(stream, test, print_failures=False, failonly=False):
     global RESULTS
     status = test['status']
     # TODO(sdague): ask lifeless why on this?
@@ -122,24 +123,25 @@ def show_outcome(stream, test, print_failures=False):
     if name == 'process-returncode':
         return
 
-    if status == 'success':
-        stream.write('{%s} %s [%s] ... ok\n' % (
-            worker, name, duration))
-        print_attachments(stream, test)
-    elif status == 'fail':
+    if status == 'fail':
         FAILS.append(test)
         stream.write('{%s} %s [%s] ... FAILED\n' % (
             worker, name, duration))
         if not print_failures:
             print_attachments(stream, test, all_channels=True)
-    elif status == 'skip':
-        stream.write('{%s} %s ... SKIPPED: %s\n' % (
-            worker, name, test['details']['reason'].as_text()))
-    else:
-        stream.write('{%s} %s [%s] ... %s\n' % (
-            worker, name, duration, test['status']))
-        if not print_failures:
-            print_attachments(stream, test, all_channels=True)
+    elif not failonly:
+        if status == 'success':
+            stream.write('{%s} %s [%s] ... ok\n' % (
+                worker, name, duration))
+            print_attachments(stream, test)
+        elif status == 'skip':
+            stream.write('{%s} %s ... SKIPPED: %s\n' % (
+                worker, name, test['details']['reason'].as_text()))
+        else:
+            stream.write('{%s} %s [%s] ... %s\n' % (
+                worker, name, duration, test['status']))
+            if not print_failures:
+                print_attachments(stream, test, all_channels=True)
 
     stream.flush()
 
@@ -219,6 +221,11 @@ def parse_args():
     parser.add_argument('--fails', '-f', action='store_true',
                         dest='post_fails', help='Print failure debug '
                         'information after the stream is proccesed')
+    parser.add_argument('--failonly', action='store_true',
+                        dest='failonly', help="Don't print success items",
+                        default=(
+                            os.environ.get('TRACE_FAILONLY', False)
+                            is not False))
     return parser.parse_args()
 
 
@@ -228,7 +235,8 @@ def main():
         sys.stdin, non_subunit_name='stdout')
     outcomes = testtools.StreamToDict(
         functools.partial(show_outcome, sys.stdout,
-                          print_failures=args.print_failures))
+                          print_failures=args.print_failures,
+                          failonly=args.failonly))
     summary = testtools.StreamSummary()
     result = testtools.CopyStreamResult([outcomes, summary])
     start_time = datetime.datetime.utcnow()
