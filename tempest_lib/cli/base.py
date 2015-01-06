@@ -307,6 +307,25 @@ class CLIClient(object):
         return self.cmd_with_auth(
             'sahara', action, flags, params, fail_ok, merge_stderr)
 
+    def openstack(self, action, flags='', params='', fail_ok=False,
+                  merge_stderr=False):
+        """Executes openstack command for the given action.
+
+        :param action: the cli command to run using openstack
+        :type action: string
+        :param flags: any optional cli flags to use
+        :type flags: string
+        :param params: any optional positional args to use
+        :type params: string
+        :param fail_ok: if True an exception is not raised when the
+                        cli return code is non-zero
+        :type fail_ok: boolean
+        :param merge_stderr: if True the stderr buffer is merged into stdout
+        :type merge_stderr: boolean
+        """
+        return self.cmd_with_auth(
+            'openstack', action, flags, params, fail_ok, merge_stderr)
+
     def cmd_with_auth(self, cmd, action, flags='', params='',
                       fail_ok=False, merge_stderr=False):
         """Executes given command with auth attributes appended.
