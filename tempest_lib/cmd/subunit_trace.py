@@ -33,6 +33,13 @@ FAILS = []
 RESULTS = {}
 
 
+def total_seconds(timedelta):
+    # NOTE(mtreinish): This method is built-in to the timedelta class in
+    # python >= 2.7 it is here to enable it's use on older versions
+    return ((timedelta.days * DAY_SECONDS + timedelta.seconds) * 10 ** 6 +
+            timedelta.microseconds) / 10 ** 6
+
+
 def cleanup_test_name(name, strip_tags=True, strip_scenarios=False):
     """Clean up the test name for display.
 
@@ -192,7 +199,7 @@ def worker_stats(worker):
 def print_summary(stream, elapsed_time):
     stream.write("\n======\nTotals\n======\n")
     stream.write("Ran: %s tests in %.4f sec.\n" % (
-        count_tests('status', '.*'), elapsed_time.total_seconds()))
+        count_tests('status', '.*'), total_seconds(elapsed_time)))
     stream.write(" - Passed: %s\n" % count_tests('status', 'success'))
     stream.write(" - Skipped: %s\n" % count_tests('status', 'skip'))
     stream.write(" - Failed: %s\n" % count_tests('status', 'fail'))
