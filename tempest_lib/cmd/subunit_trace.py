@@ -81,10 +81,15 @@ def get_duration(timestamps):
 
 
 def find_worker(test):
+    """Get the worker number.
+
+    If there are no workers because we aren't in a concurrent environment,
+    assume the worker number is 0.
+    """
     for tag in test['tags']:
         if tag.startswith('worker-'):
             return int(tag[7:])
-    return 'NaN'
+    return 0
 
 
 # Print out stdout/stderr if it exists, always
