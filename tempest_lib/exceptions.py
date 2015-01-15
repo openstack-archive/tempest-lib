@@ -17,13 +17,12 @@ import testtools
 
 
 class TempestException(Exception):
-    """Base Tempest Exception.
+    """Base Tempest Exception
 
     To correctly use this class, inherit from it and define
     a 'message' property. That message will get printf'd
     with the keyword arguments provided to the constructor.
     """
-
     message = "An unknown exception occurred"
 
     def __init__(self, *args, **kwargs):
@@ -75,7 +74,7 @@ class Unauthorized(RestClientException):
     message = 'Unauthorized'
 
 
-class InvalidServiceTag(RestClientException):
+class InvalidServiceTag(TempestException):
     message = "Invalid service tag"
 
 
@@ -140,16 +139,20 @@ class EndpointNotFound(TempestException):
     message = "Endpoint not found"
 
 
-class RateLimitExceeded(TempestException):
+class RateLimitExceeded(RestClientException):
     message = "Rate limit exceeded"
 
 
-class OverLimit(TempestException):
+class OverLimit(RestClientException):
     message = "Quota exceeded"
 
 
-class ServerFault(TempestException):
+class ServerFault(RestClientException):
     message = "Got server fault"
+
+
+class NotImplemented(RestClientException):
+    message = "Got NotImplemented error"
 
 
 class ImageFault(TempestException):
