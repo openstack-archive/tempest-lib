@@ -46,11 +46,14 @@ function count_commits {
 git clone $TEMPEST_GIT_URL $tmpdir
 cd $tmpdir
 
-# get only commits that touch our files
-commits="$(git log --format=format:%h --no-merges --follow -- $files)"
-# then their merge commits - which works fina since we merge commits
-# individually.
-merge_commits="$(git log --format=format:%h --merges --first-parent -- $files)"
+for file in $files; do
+    # get only commits that touch our files
+    commits="$commits $(git log --format=format:%h --no-merges --follow -- $file)"
+    # then their merge commits - which works fina since we merge commits
+    # individually.
+    merge_commits="$merge_commits $(git log --format=format:%h --merges --first-parent -- $file)"
+done
+
 pattern="\n$(echo $commits $merge_commits | sed -e 's/ /\\|/g')"
 
 # order them by filtering each one in the order it appears on rev-list
