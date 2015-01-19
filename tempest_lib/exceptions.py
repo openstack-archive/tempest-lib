@@ -50,10 +50,6 @@ class RestClientException(TempestException,
     pass
 
 
-class RFCViolation(RestClientException):
-    message = "RFC Violation"
-
-
 class InvalidHttpSuccessCode(RestClientException):
     message = "The success code is different than the expected one"
 
@@ -66,7 +62,7 @@ class Unauthorized(RestClientException):
     message = 'Unauthorized'
 
 
-class TimeoutException(TempestException):
+class TimeoutException(RestClientException):
     message = "Request timed out"
 
 
@@ -98,12 +94,12 @@ class Conflict(RestClientException):
     message = "An object with that identifier already exists"
 
 
-class ResponseWithNonEmptyBody(RFCViolation):
+class ResponseWithNonEmptyBody(RestClientException):
     message = ("RFC Violation! Response with %(status)d HTTP Status Code "
                "MUST NOT have a body")
 
 
-class ResponseWithEntity(RFCViolation):
+class ResponseWithEntity(RestClientException):
     message = ("RFC Violation! Response with 205 HTTP Status Code "
                "MUST NOT have an entity")
 
