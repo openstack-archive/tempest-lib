@@ -274,10 +274,15 @@ class TestRestClientParseRespJSON(BaseRestClientTestClass):
 class TestRestClientErrorCheckerJSON(base.TestCase):
     c_type = "application/json"
 
-    def set_data(self, r_code, enc=None, r_body=None):
+    def set_data(self, r_code, enc=None, r_body=None, absolute_limit=True):
         if enc is None:
             enc = self.c_type
         resp_dict = {'status': r_code, 'content-type': enc}
+        resp_body = {'resp_body': 'fake_resp_body'}
+
+        if absolute_limit is False:
+            resp_dict.update({'retry-after': 120})
+            resp_body.update({'overLimit': {'message': 'fake_message'}})
         resp = httplib2.Response(resp_dict)
         data = {
             "method": "fake_method",
@@ -285,7 +290,7 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
             "headers": "fake_headers",
             "body": "fake_body",
             "resp": resp,
-            "resp_body": '{"resp_body": "fake_resp_body"}',
+            "resp_body": json.dumps(resp_body)
         }
         if r_body is not None:
             data.update({"resp_body": r_body})
@@ -328,6 +333,11 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
         self.assertRaises(exceptions.OverLimit,
                           self.rest_client._error_checker,
                           **self.set_data("413"))
+
+    def test_response_413_without_absolute_limit(self):
+        self.assertRaises(exceptions.RateLimitExceeded,
+                          self.rest_client._error_checker,
+                          **self.set_data("413", absolute_limit=False))
 
     def test_response_415(self):
         self.assertRaises(exceptions.InvalidContentType,
@@ -380,6 +390,11 @@ class TestRestClientErrorCheckerTEXT(TestRestClientErrorCheckerJSON):
         self.assertRaises(exceptions.InvalidContentType,
                           self.rest_client._error_checker,
                           **self.set_data("405", enc="fake_enc"))
+
+    def test_response_413_without_absolute_limit(self):
+        # Skip this test because rest_client cannot get overLimit message
+        # from text body.
+        pass
 
 
 class TestRestClientUtils(BaseRestClientTestClass):
