@@ -76,7 +76,7 @@ class CLIClient(object):
     :type tenant_name: string
     :param uri: The auth uri for the OpenStack Deployment
     :type uri: string
-    :param cli_dir: The path where the python clien binaries are installed.
+    :param cli_dir: The path where the python client binaries are installed.
                     defaults to /usr/bin
     :type cli_dir: string
     """
