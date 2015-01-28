@@ -423,8 +423,11 @@ class RestClient(object):
         else:
             raise exceptions.InvalidContentType(str(resp.status))
 
-        if resp.status == 401 or resp.status == 403:
+        if resp.status == 401:
             raise exceptions.Unauthorized(resp_body)
+
+        if resp.status == 403:
+            raise exceptions.Forbidden(resp_body)
 
         if resp.status == 404:
             raise exceptions.NotFound(resp_body)
