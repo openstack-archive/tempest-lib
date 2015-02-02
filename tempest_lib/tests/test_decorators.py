@@ -1,0 +1,59 @@
+# Copyright 2013 IBM Corp
+# Copyright 2015 Hewlett-Packard Development Company, L.P.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import testtools
+
+from tempest_lib import base as test
+from tempest_lib import decorators
+from tempest_lib.tests import base
+
+
+class TestSkipBecauseDecorator(base.TestCase):
+    def _test_skip_because_helper(self, expected_to_skip=True,
+                                  **decorator_args):
+        class TestFoo(test.BaseTestCase):
+            _interface = 'json'
+
+            @decorators.skip_because(**decorator_args)
+            def test_bar(self):
+                return 0
+
+        t = TestFoo('test_bar')
+        if expected_to_skip:
+            self.assertRaises(testtools.TestCase.skipException, t.test_bar)
+        else:
+            # assert that test_bar returned 0
+            self.assertEqual(TestFoo('test_bar').test_bar(), 0)
+
+    def test_skip_because_bug(self):
+        self._test_skip_because_helper(bug='12345')
+
+    def test_skip_because_bug_and_condition_true(self):
+        self._test_skip_because_helper(bug='12348', condition=True)
+
+    def test_skip_because_bug_and_condition_false(self):
+        self._test_skip_because_helper(expected_to_skip=False,
+                                       bug='12349', condition=False)
+
+    def test_skip_because_bug_without_bug_never_skips(self):
+        """Never skip without a bug parameter."""
+        self._test_skip_because_helper(expected_to_skip=False,
+                                       condition=True)
+        self._test_skip_because_helper(expected_to_skip=False)
+
+    def test_skip_because_invalid_bug_number(self):
+        """Raise ValueError if with an invalid bug number"""
+        self.assertRaises(ValueError, self._test_skip_because_helper,
+                          bug='critical_bug')
