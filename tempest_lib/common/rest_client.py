@@ -39,6 +39,9 @@ class RestClient(object):
 
     TYPE = "json"
 
+    # The version of the API this client implements
+    api_version = None
+
     LOG = logging.getLogger(__name__)
 
     def __init__(self, auth_provider, service, region,
@@ -54,8 +57,6 @@ class RestClient(object):
         self.build_timeout = build_timeout
         self.trace_requests = trace_requests
 
-        # The version of the API this client implements
-        self.api_version = None
         self._skip_path = False
         self.general_header_lc = set(('cache-control', 'connection',
                                       'date', 'pragma', 'trailer',
