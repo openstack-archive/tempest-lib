@@ -62,6 +62,10 @@ class Unauthorized(RestClientException):
     message = 'Unauthorized'
 
 
+class Forbidden(RestClientException):
+    message = "Forbidden"
+
+
 class TimeoutException(RestClientException):
     message = "Request timed out"
 

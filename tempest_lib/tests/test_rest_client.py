@@ -315,7 +315,7 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
                           **self.set_data("401"))
 
     def test_response_403(self):
-        self.assertRaises(exceptions.Unauthorized,
+        self.assertRaises(exceptions.Forbidden,
                           self.rest_client._error_checker,
                           **self.set_data("403"))
 
