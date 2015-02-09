@@ -21,12 +21,12 @@ import re
 import time
 
 import jsonschema
+from oslo_log import log as logging
 import six
 
 from tempest_lib.common import http
 from tempest_lib.common.utils import misc as misc_utils
 from tempest_lib import exceptions
-from tempest_lib.openstack.common import log as logging
 
 # redrive rate limited calls at most twice
 MAX_RECURSION_DEPTH = 2
