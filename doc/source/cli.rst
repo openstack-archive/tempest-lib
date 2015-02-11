@@ -1,3 +1,8 @@
+.. _cli:
+
+CLI Testing Framework Usage
+===========================
+
 -------------------
 The cli.base module
 -------------------
