@@ -251,6 +251,9 @@ def main():
                           failonly=args.failonly))
     summary = testtools.StreamSummary()
     result = testtools.CopyStreamResult([outcomes, summary])
+    result = testtools.StreamResultRouter(result)
+    cat = subunit.test_results.CatFiles(sys.stdout)
+    result.add_rule(cat, 'test_id', test_id=None)
     start_time = datetime.datetime.utcnow()
     result.startTestRun()
     try:
