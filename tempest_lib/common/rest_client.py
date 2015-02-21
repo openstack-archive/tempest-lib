@@ -36,7 +36,27 @@ HTTP_SUCCESS = (200, 201, 202, 203, 204, 205, 206, 207)
 
 
 class RestClient(object):
+    """Unified OpenStack RestClient class
 
+    This class is used for building openstack api clients on top of. It is
+    intended to provide a base layer for wrapping outgoing http requests in
+    keystone auth as well as providing response code checking and error
+    handling.
+
+    :param auth_provider: an auth provider object used to wrap requests in auth
+    :param str service: The service name to use for the catalog lookup
+    :param str region: The region to use for the catalog lookup
+    :param str endpoint_type: The endpoint type to use for the catalog lookup
+    :param int build_interval: Time in seconds between to status checks in
+                               wait loops
+    :param int build_timeout: Timeout in seconds to wait for a wait operation.
+    :param bool disable_ssl_certificate_validation: Set to true to disable ssl
+                                                    certificate validation
+    :param str ca_certs: File containing the CA Bundle to use in verifying a
+                         TLS server cert
+    :param str trace_request: Regex to use for specifying logging the entirety
+                              of the request and response payload
+    """
     TYPE = "json"
 
     # The version of the API this client implements
@@ -74,6 +94,18 @@ class RestClient(object):
         return self.TYPE
 
     def get_headers(self, accept_type=None, send_type=None):
+        """Return the default headers which will be used with outgoing requests
+
+        :param str accept_type: The media type to use for the Accept header, if
+                                one isn't provided the object var TYPE will be
+                                used
+        :param str send_type: The media-type to use for the Content-Type
+                              header, if one isn't provided the object var
+                              TYPE will be used
+        :rtype: dict
+        :return: The dictionary of headers which can be used in the headers
+                 dict for outgoing request
+        """
         if accept_type is None:
             accept_type = self._get_type()
         if send_type is None:
@@ -94,22 +126,48 @@ class RestClient(object):
 
     @property
     def user(self):
+        """The username used for requests
+
+        :rtype: string
+        :return: The username being used for requests
+        """
+
         return self.auth_provider.credentials.username
 
     @property
     def user_id(self):
+        """The user_id used for requests
+
+        :rtype: string
+        :return: The user id being used for requests
+        """
         return self.auth_provider.credentials.user_id
 
     @property
     def tenant_name(self):
+        """The tenant/project being used for requests
+
+        :rtype: string
+        :return: The tenant/project name being used for requests
+        """
         return self.auth_provider.credentials.tenant_name
 
     @property
     def tenant_id(self):
+        """The tenant/project id being used for requests
+
+        :rtype: string
+        :return: The tenant/project id being used for requests
+        """
         return self.auth_provider.credentials.tenant_id
 
     @property
     def password(self):
+        """The password being used for requests
+
+        :rtype: string
+        :return: The password being used for requests
+        """
         return self.auth_provider.credentials.password
 
     @property
@@ -143,6 +201,18 @@ class RestClient(object):
 
     @classmethod
     def expected_success(cls, expected_code, read_code):
+        """Check expected success response code against the http response
+
+        :param int expected_code: The response code that is expected.
+                                  Optionally a list of integers can be used
+                                  to specify multiple valid success codes
+        :param int read_code: The response code which was returned in the
+                              response
+        :raises AssertionError: if the expected_code isn't a valid http success
+                                response code
+        :raises exceptions.InvalidHttpSuccessCode: if the read code isn't an
+                                                   expected http success code
+        """
         assert_msg = ("This function only allowed to use for HTTP status"
                       "codes which explicitly defined in the RFC 7231 & 4918."
                       "{0} is not a defined Success Code!"
@@ -166,27 +236,125 @@ class RestClient(object):
                 raise exceptions.InvalidHttpSuccessCode(details)
 
     def post(self, url, body, headers=None, extra_headers=False):
+        """Send a HTTP POST request using keystone auth
+
+        :param str url: the relative url to send the post request to
+        :param dict body: the request body
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('POST', url, extra_headers, headers, body)
 
     def get(self, url, headers=None, extra_headers=False):
+        """Send a HTTP GET request using keystone service catalog and auth
+
+        :param str url: the relative url to send the post request to
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('GET', url, extra_headers, headers)
 
     def delete(self, url, headers=None, body=None, extra_headers=False):
+        """Send a HTTP DELETE request using keystone service catalog and auth
+
+        :param str url: the relative url to send the post request to
+        :param dict body: the request body
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('DELETE', url, extra_headers, headers, body)
 
     def patch(self, url, body, headers=None, extra_headers=False):
+        """Send a HTTP PATCH request using keystone service catalog and auth
+
+        :param str url: the relative url to send the post request to
+        :param dict body: the request body
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('PATCH', url, extra_headers, headers, body)
 
     def put(self, url, body, headers=None, extra_headers=False):
+        """Send a HTTP PUT request using keystone service catalog and auth
+
+        :param str url: the relative url to send the post request to
+        :param dict body: the request body
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('PUT', url, extra_headers, headers, body)
 
     def head(self, url, headers=None, extra_headers=False):
+        """Send a HTTP HEAD request using keystone service catalog and auth
+
+        :param str url: the relative url to send the post request to
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('HEAD', url, extra_headers, headers)
 
     def copy(self, url, headers=None, extra_headers=False):
+        """Send a HTTP COPY request using keystone service catalog and auth
+
+        :param str url: the relative url to send the post request to
+        :param dict headers: The headers to use for the request
+        :param dict extra_headers: If the headers returned by the get_headers()
+                                   method are to be used but additional headers
+                                   are needed in the request pass them in as a
+                                   dict
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :rtype: tuple
+        """
         return self.request('COPY', url, extra_headers, headers)
 
     def get_versions(self):
+        """Get the versions on a endpoint from the keystone catalog
+
+        This method will make a GET request on the baseurl from the keystone
+        catalog to return a list of API versions. It is expected that a GET
+        on the endpoint in the catalog will return a list of supported API
+        versions.
+
+        :return tuple with response headers and list of version numbers
+        :rtype: tuple
+        """
         resp, body = self.get('')
         body = self._parse_resp(body)
         versions = map(lambda x: x['id'], body)
@@ -300,6 +468,20 @@ class RestClient(object):
         return body
 
     def response_checker(self, method, resp, resp_body):
+        """A sanity check on the response from a HTTP request
+
+        This method does a sanity check on whether the response from an HTTP
+        request conforms the HTTP RFC.
+
+        :param str method: The HTTP verb of the request associated with the
+                           response being passed in.
+        :param resp: The response headers
+        :param resp_body: The body of the response
+        :raises ResponseWithNonEmptyBody: If the response with the status code
+                                          is not supposed to have a body
+        :raises ResponseWithEntity: If the response code is 205 but has an
+                                    entity
+        """
         if (resp.status in set((204, 205, 304)) or resp.status < 200 or
                 method.upper() == 'HEAD') and resp_body:
             raise exceptions.ResponseWithNonEmptyBody(status=resp.status)
@@ -349,6 +531,22 @@ class RestClient(object):
         return resp, resp_body
 
     def raw_request(self, url, method, headers=None, body=None):
+        """Send a raw HTTP request without the keystone catalog or auth
+
+        This method sends a HTTP request in the same manner as the request()
+        method, however it does so without using keystone auth or the catalog
+        to determine the base url. Additionally no response handling is done
+        the results from the request are just returned.
+
+        :param str url: Full url to send the request
+        :param str method: The HTTP verb to use for the request
+        :param str headers: Headers to use for the request if none are specifed
+                            the headers
+        :param str body: Body to to send with the request
+        :rtype: tuple
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        """
         if headers is None:
             headers = self.get_headers()
         return self.http_obj.request(url, method,
@@ -356,6 +554,55 @@ class RestClient(object):
 
     def request(self, method, url, extra_headers=False, headers=None,
                 body=None):
+        """Send a HTTP request with keystone auth and using the catalog
+
+        This method will send an HTTP request using keystone auth in the
+        headers and the catalog to determine the endpoint to use for the
+        baseurl to send the request to. Additionally
+
+        When a response is recieved it will check it to see if an error
+        response was recieved. If it was an exception will be raised to enable
+        it to be handled quickly.
+
+        This method will also handle rate-limiting, if a 413 response code is
+        recieved it will retry the request after waiting the 'retry-after'
+        duration from the header.
+
+        :param str url: Relative url to send the request to
+        :param str method: The HTTP verb to use for the request
+        :param dict extra_headers: If specified without the headers kwarg the
+                                   headers sent with the request will be the
+                                   combination from the get_headers() method
+                                   and this kwarg
+        :param dict headers: Headers to use for the request if none are
+                             specifed the headers returned from the
+                             get_headers() method are used. If the request
+                             explicitly requires no headers use an empty dict.
+        :param str body: Body to to send with the request
+        :rtype: tuple
+        :return: a tuple with the first entry containing the response headers
+                 and the second the response body
+        :raises InvalidContentType: If the content-type of the response isn't
+                                    an expect type or a 415 response code is
+                                    recieved
+        :raises Unauthorized: If a 401 response code is recieved
+        :raises Forbidden: If a 403 response code is recieved
+        :raises NotFound: If a 404 response code is recieved
+        :raises BadRequest: If a 400 response code is recieved
+        :raises Conflict: If a 409 response code is recieved
+        :raies Overlimit: If a 413 response code is recieved and over_limit is
+                          not in the response body
+        :raises RateLimitExceeded: If a 413 response code is recieved and
+                                   over_limit is in the response body
+        :raises UnprocessableEntity: If a 422 response code is recieved
+        :raises InvalidHTTPResponseBody: The response body wasn't valid JSON
+                                         and couldn't be parsed
+        :raises NotImplemented: If a 501 response code is recieved
+        :raises ServerFault: If a 500 response code is recieved
+        :raises UnexpectedResponseCode: If a response code above 400 is
+                                        recieved and it doesn't fall into any
+                                        of the handled checks
+        """
         # if extra_headers is True
         # default headers would be added to headers
         retry = 0
@@ -505,7 +752,16 @@ class RestClient(object):
         return 'exceed' in over_limit.get('message', 'blabla')
 
     def wait_for_resource_deletion(self, id):
-        """Waits for a resource to be deleted."""
+        """Waits for a resource to be deleted
+
+        This method will loop over is_resource_deleted until either
+        is_resource_deleted returns True or the build timeout is reached. This
+        depends on is_resource_deleted being implemented
+
+        :param str id: The id of the resource to check
+        :raises TimeoutException: If the build_timeout has elapsed and the
+                                  resource still hasn't been deleted
+        """
         start_time = int(time.time())
         while True:
             if self.is_resource_deleted(id):
