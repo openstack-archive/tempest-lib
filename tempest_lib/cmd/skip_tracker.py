@@ -25,7 +25,10 @@ import logging
 import os
 import re
 
-from launchpadlib import launchpad
+try:
+    from launchpadlib import launchpad
+except ImportError:
+    launchpad = None
 
 LPCACHEDIR = os.path.expanduser('~/.launchpadlib/cache')
 
@@ -114,9 +117,14 @@ def main():
     duplicates = []
     info("Total bug skips found: %d", len(results))
     info("Total unique bugs causing skips: %d", len(unique_bugs))
-    lp = launchpad.Launchpad.login_anonymously('grabbing bugs',
-                                               'production',
-                                               LPCACHEDIR)
+    if launchpad is not None:
+        lp = launchpad.Launchpad.login_anonymously('grabbing bugs',
+                                                   'production',
+                                                   LPCACHEDIR)
+    else:
+        print("To check the bug status launchpadlib should be installed")
+        exit(1)
+
     for bug_no in unique_bugs:
         bug = lp.bugs[bug_no]
         duplicate = bug.duplicate_of_link
