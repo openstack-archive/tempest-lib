@@ -225,19 +225,13 @@ class RestClient(object):
                           caller_name=None, extra=None):
         if 'X-Auth-Token' in req_headers:
             req_headers['X-Auth-Token'] = '<omitted>'
-        log_fmt = """Request (%s): %s %s %s%s
-    Request - Headers: %s
+        log_fmt = """Request - Headers: %s
         Body: %s
     Response - Headers: %s
         Body: %s"""
 
         self.LOG.debug(
             log_fmt % (
-                caller_name,
-                resp['status'],
-                method,
-                req_url,
-                secs,
                 str(req_headers),
                 self._safe_body(req_body),
                 str(resp),
@@ -258,20 +252,20 @@ class RestClient(object):
         caller_name = misc_utils.find_test_caller()
         if secs:
             secs = " %.3fs" % secs
-        if not self.LOG.isEnabledFor(real_logging.DEBUG):
-            self.LOG.info(
-                'Request (%s): %s %s %s%s' % (
-                    caller_name,
-                    resp['status'],
-                    method,
-                    req_url,
-                    secs),
-                extra=extra)
+        self.LOG.info(
+            'Request (%s): %s %s %s%s' % (
+                caller_name,
+                resp['status'],
+                method,
+                req_url,
+                secs),
+            extra=extra)
 
         # Also look everything at DEBUG if you want to filter this
         # out, don't run at debug.
-        self._log_request_full(method, req_url, resp, secs, req_headers,
-                               req_body, resp_body, caller_name, extra)
+        if self.LOG.isEnabledFor(real_logging.DEBUG):
+            self._log_request_full(method, req_url, resp, secs, req_headers,
+                                   req_body, resp_body, caller_name, extra)
 
     def _parse_resp(self, body):
         body = json.loads(body)
