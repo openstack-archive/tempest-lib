@@ -143,3 +143,7 @@ class CommandFailed(Exception):
                                  self.returncode,
                                  self.stdout,
                                  self.stderr))
+
+
+class IdentityError(TempestException):
+    message = "Got identity error"

@@ -813,3 +813,50 @@ class RestClient(object):
                 except jsonschema.ValidationError as ex:
                     msg = ("HTTP response header is invalid (%s)") % ex
                     raise exceptions.InvalidHTTPResponseHeader(msg)
+
+
+class ResponseBody(dict):
+    """Class that wraps an http response and dict body into a single value.
+
+    Callers that receive this object will normally use it as a dict but
+    can extract the response if needed.
+    """
+
+    def __init__(self, response, body=None):
+        body_data = body or {}
+        self.update(body_data)
+        self.response = response
+
+    def __str__(self):
+        body = super(ResponseBody, self).__str__()
+        return "response: %s\nBody: %s" % (self.response, body)
+
+
+class ResponseBodyData(object):
+    """Class that wraps an http response and string data into a single value.
+
+    """
+
+    def __init__(self, response, data):
+        self.response = response
+        self.data = data
+
+    def __str__(self):
+        return "response: %s\nBody: %s" % (self.response, self.data)
+
+
+class ResponseBodyList(list):
+    """Class that wraps an http response and list body into a single value.
+
+    Callers that receive this object will normally use it as a list but
+    can extract the response if needed.
+    """
+
+    def __init__(self, response, body=None):
+        body_data = body or []
+        self.extend(body_data)
+        self.response = response
+
+    def __str__(self):
+        body = super(ResponseBodyList, self).__str__()
+        return "response: %s\nBody: %s" % (self.response, body)
