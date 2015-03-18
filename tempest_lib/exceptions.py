@@ -147,3 +147,7 @@ class CommandFailed(Exception):
 
 class IdentityError(TempestException):
     message = "Got identity error"
+
+
+class EndpointNotFound(TempestException):
+    message = "Endpoint not found"
