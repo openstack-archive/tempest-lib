@@ -151,3 +151,7 @@ class IdentityError(TempestException):
 
 class EndpointNotFound(TempestException):
     message = "Endpoint not found"
+
+
+class InvalidCredentials(TempestException):
+    message = "Invalid Credentials"
