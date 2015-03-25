@@ -48,6 +48,13 @@ class TestDataUtils(base.TestCase):
         self.assertTrue(actual.startswith('foo'))
         self.assertNotEqual(actual, actual2)
 
+    def test_rand_name_with_prefix(self):
+        actual = data_utils.rand_name(prefix='prefix-str')
+        self.assertIsInstance(actual, str)
+        self.assertRegexpMatches(actual, "^prefix-str-")
+        actual2 = data_utils.rand_name(prefix='prefix-str')
+        self.assertNotEqual(actual, actual2)
+
     def test_rand_url(self):
         actual = data_utils.rand_url()
         self.assertIsInstance(actual, str)
