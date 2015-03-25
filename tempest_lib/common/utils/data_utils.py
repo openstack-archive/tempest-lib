@@ -27,12 +27,14 @@ def rand_uuid_hex():
     return uuid.uuid4().hex
 
 
-def rand_name(name=''):
+def rand_name(name='', prefix=None):
     randbits = str(random.randint(1, 0x7fffffff))
+    rand_name = randbits
     if name:
-        return name + '-' + randbits
-    else:
-        return randbits
+        rand_name = name + '-' + rand_name
+    if prefix:
+        rand_name = prefix + '-' + rand_name
+    return rand_name
 
 
 def rand_url():
