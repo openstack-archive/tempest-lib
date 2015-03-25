@@ -48,6 +48,13 @@ class TestDataUtils(base.TestCase):
         self.assertTrue(actual.startswith('foo'))
         self.assertNotEqual(actual, actual2)
 
+    def test_rand_url(self):
+        actual = data_utils.rand_url()
+        self.assertIsInstance(actual, str)
+        self.assertRegexpMatches(actual, "^https://url-[0-9]*\.com$")
+        actual2 = data_utils.rand_url()
+        self.assertNotEqual(actual, actual2)
+
     def test_rand_int(self):
         actual = data_utils.rand_int_id()
         self.assertIsInstance(actual, int)
@@ -75,3 +82,13 @@ class TestDataUtils(base.TestCase):
         self.assertEqual(actual, "abc" * int(30 / len("abc")))
         actual = data_utils.arbitrary_string(size=5, base_text="deadbeaf")
         self.assertEqual(actual, "deadb")
+
+    def test_random_bytes(self):
+        actual = data_utils.random_bytes()  # default size=1024
+        self.assertIsInstance(actual, str)
+        self.assertRegexpMatches(actual, "^[\x00-\xFF]{1024}")
+        actual2 = data_utils.random_bytes()
+        self.assertNotEqual(actual, actual2)
+
+        actual = data_utils.random_bytes(size=2048)
+        self.assertRegexpMatches(actual, "^[\x00-\xFF]{2048}")
