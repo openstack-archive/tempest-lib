@@ -437,6 +437,11 @@ class TestRestClientUtils(BaseRestClientTestClass):
                           self.rest_client.wait_for_resource_deletion,
                           '1234')
 
+    def test_get_versions(self):
+        self.rest_client._parse_resp = lambda x: [{'id': 'v1'}, {'id': 'v2'}]
+        actual_resp, actual_versions = self.rest_client.get_versions()
+        self.assertEqual(['v1', 'v2'], list(actual_versions))
+
 
 class TestExpectedSuccess(BaseRestClientTestClass):
 
