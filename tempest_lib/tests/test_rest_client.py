@@ -483,3 +483,33 @@ class TestExpectedSuccess(BaseRestClientTestClass):
         read_code = 202
         self.assertRaises(AssertionError, self.rest_client.expected_success,
                           expected_code, read_code)
+
+
+class TestResponseBody(base.TestCase):
+
+    def test_str(self):
+        response = {'status': 200}
+        body = {'key1': 'value1'}
+        actual = rest_client.ResponseBody(response, body)
+        self.assertEqual("response: %s\nBody: %s" % (response, body),
+                         str(actual))
+
+
+class TestResponseBodyData(base.TestCase):
+
+    def test_str(self):
+        response = {'status': 200}
+        data = 'data1'
+        actual = rest_client.ResponseBodyData(response, data)
+        self.assertEqual("response: %s\nBody: %s" % (response, data),
+                         str(actual))
+
+
+class TestResponseBodyList(base.TestCase):
+
+    def test_str(self):
+        response = {'status': 200}
+        body = ['value1', 'value2', 'value3']
+        actual = rest_client.ResponseBodyList(response, body)
+        self.assertEqual("response: %s\nBody: %s" % (response, body),
+                         str(actual))
