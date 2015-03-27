@@ -20,14 +20,33 @@ import uuid
 
 
 def rand_uuid():
+    """Generate a random UUID string
+
+    :return: a random UUID (e.g. '1dc12c7d-60eb-4b61-a7a2-17cf210155b6')
+    :rtype: string
+    """
     return str(uuid.uuid4())
 
 
 def rand_uuid_hex():
+    """Generate a random UUID hex string
+
+    :return: a random UUID (e.g. '0b98cf96d90447bda4b46f31aeb1508c')
+    :rtype: string
+    """
     return uuid.uuid4().hex
 
 
 def rand_name(name='', prefix=None):
+    """Generate a random name that inclues a random number
+
+    :param str name: The name that you want to include
+    :param str prefix: The prefix that you want to include
+    :return: a random name. The format is
+             '<prefix>-<random number>-<name>-<random number>'.
+             (e.g. 'prefixfoo-1308607012-namebar-154876201')
+    :rtype: string
+    """
     randbits = str(random.randint(1, 0x7fffffff))
     rand_name = randbits
     if name:
@@ -38,16 +57,33 @@ def rand_name(name='', prefix=None):
 
 
 def rand_url():
+    """Generate a random url that inclues a random number
+
+    :return: a random url. The format is 'https://url-<random number>.com'.
+             (e.g. 'https://url-154876201.com')
+    :rtype: string
+    """
     randbits = str(random.randint(1, 0x7fffffff))
     return 'https://url-' + randbits + '.com'
 
 
 def rand_int_id(start=0, end=0x7fffffff):
+    """Generate a random integer value
+
+    :param int start: The value that you expect to start here
+    :param int end: The value that you expect to end here
+    :return: a random integer value
+    :rtype: int
+    """
     return random.randint(start, end)
 
 
 def rand_mac_address():
-    """Generate an Ethernet MAC address."""
+    """Generate an Ethernet MAC address
+
+    :return: an random Ethernet MAC address
+    :rtype: string
+    """
     # NOTE(vish): We would prefer to use 0xfe here to ensure that linux
     #             bridge mac addresses don't change, but it appears to
     #             conflict with libvirt, so we use the next highest octet
@@ -62,14 +98,27 @@ def rand_mac_address():
 
 
 def parse_image_id(image_ref):
-    """Return the image id from a given image ref."""
+    """Return the image id from a given image ref
+
+    This function just returns the last word of the given image ref string
+    splitting with '/'.
+    :param str image_ref: a string that includes the image id
+    :return: the image id string
+    :rtype: string
+    """
     return image_ref.rsplit('/')[-1]
 
 
 def arbitrary_string(size=4, base_text=None):
     """Return size characters from base_text
 
-    Repeating the base_text infinitely if needed.
+    This generates a string with an arbitrary number of characters, generated
+    by looping the base_text string. If the size is smaller than the size of
+    base_text, returning string is shrinked to the size.
+    :param int size: a returning charactors size
+    :param str base_text: a string you want to repeat
+    :return: size string
+    :rtype: string
     """
     if not base_text:
         base_text = 'test'
@@ -77,12 +126,24 @@ def arbitrary_string(size=4, base_text=None):
 
 
 def random_bytes(size=1024):
-    """Return size randomly selected bytes as a string."""
+    """Return size randomly selected bytes as a string
+
+    :param int size: a returning bytes size
+    :return: size randomly bytes
+    :rtype: string
+    """
     return ''.join([chr(random.randint(0, 255))
                     for i in range(size)])
 
 
 def get_ipv6_addr_by_EUI64(cidr, mac):
+    """Generate a IPv6 addr by EUI-64 with CIDR and MAC
+
+    :param str cidr: a IPv6 CIDR
+    :param str mac: a MAC address
+    :return: an IPv6 Address
+    :rtype: netaddr.IPAddress
+    """
     # Check if the prefix is IPv4 address
     is_ipv4 = netaddr.valid_ipv4(cidr)
     if is_ipv4:
