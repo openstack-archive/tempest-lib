@@ -438,6 +438,47 @@ class TestRestClientUtils(BaseRestClientTestClass):
                           '1234')
 
 
+class TestProperties(BaseRestClientTestClass):
+
+    def setUp(self):
+        self.fake_http = fake_http.fake_httplib2()
+        super(TestProperties, self).setUp()
+        creds_dict = {
+            'username': 'test-user',
+            'user_id': 'test-user_id',
+            'tenant_name': 'test-tenant_name',
+            'tenant_id': 'test-tenant_id',
+            'password': 'test-password'
+        }
+        self.rest_client = rest_client.RestClient(
+            fake_auth_provider.FakeAuthProvider(creds_dict=creds_dict),
+            None, None)
+
+    def test_properties(self):
+        self.assertEqual('test-user', self.rest_client.user)
+        self.assertEqual('test-user_id', self.rest_client.user_id)
+        self.assertEqual('test-tenant_name', self.rest_client.tenant_name)
+        self.assertEqual('test-tenant_id', self.rest_client.tenant_id)
+        self.assertEqual('test-password', self.rest_client.password)
+
+        self.rest_client.api_version = 'v1'
+        expected = {'api_version': 'v1',
+                    'endpoint_type': 'publicURL',
+                    'region': None,
+                    'service': None,
+                    'skip_path': True}
+        self.rest_client.skip_path()
+        self.assertEqual(expected, self.rest_client.filters)
+
+        self.rest_client.reset_path()
+        self.rest_client.api_version = 'v1'
+        expected = {'api_version': 'v1',
+                    'endpoint_type': 'publicURL',
+                    'region': None,
+                    'service': None}
+        self.assertEqual(expected, self.rest_client.filters)
+
+
 class TestExpectedSuccess(BaseRestClientTestClass):
 
     def setUp(self):
