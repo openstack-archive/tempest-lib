@@ -270,8 +270,8 @@ class RestClient(object):
         """Send a HTTP DELETE request using keystone service catalog and auth
 
         :param str url: the relative url to send the post request to
-        :param dict body: the request body
         :param dict headers: The headers to use for the request
+        :param dict body: the request body
         :param dict extra_headers: If the headers returned by the get_headers()
                                    method are to be used but additional headers
                                    are needed in the request pass them in as a
@@ -554,16 +554,16 @@ class RestClient(object):
         headers and the catalog to determine the endpoint to use for the
         baseurl to send the request to. Additionally
 
-        When a response is recieved it will check it to see if an error
-        response was recieved. If it was an exception will be raised to enable
+        When a response is received it will check it to see if an error
+        response was received. If it was an exception will be raised to enable
         it to be handled quickly.
 
         This method will also handle rate-limiting, if a 413 response code is
-        recieved it will retry the request after waiting the 'retry-after'
+        received it will retry the request after waiting the 'retry-after'
         duration from the header.
 
-        :param str url: Relative url to send the request to
         :param str method: The HTTP verb to use for the request
+        :param str url: Relative url to send the request to
         :param dict extra_headers: If specified without the headers kwarg the
                                    headers sent with the request will be the
                                    combination from the get_headers() method
@@ -578,23 +578,23 @@ class RestClient(object):
                  and the second the response body
         :raises InvalidContentType: If the content-type of the response isn't
                                     an expect type or a 415 response code is
-                                    recieved
-        :raises Unauthorized: If a 401 response code is recieved
-        :raises Forbidden: If a 403 response code is recieved
-        :raises NotFound: If a 404 response code is recieved
-        :raises BadRequest: If a 400 response code is recieved
-        :raises Conflict: If a 409 response code is recieved
-        :raies Overlimit: If a 413 response code is recieved and over_limit is
+                                    received
+        :raises Unauthorized: If a 401 response code is received
+        :raises Forbidden: If a 403 response code is received
+        :raises NotFound: If a 404 response code is received
+        :raises BadRequest: If a 400 response code is received
+        :raises Conflict: If a 409 response code is received
+        :raises OverLimit: If a 413 response code is received and over_limit is
                           not in the response body
-        :raises RateLimitExceeded: If a 413 response code is recieved and
+        :raises RateLimitExceeded: If a 413 response code is received and
                                    over_limit is in the response body
-        :raises UnprocessableEntity: If a 422 response code is recieved
+        :raises UnprocessableEntity: If a 422 response code is received
         :raises InvalidHTTPResponseBody: The response body wasn't valid JSON
                                          and couldn't be parsed
-        :raises NotImplemented: If a 501 response code is recieved
-        :raises ServerFault: If a 500 response code is recieved
+        :raises NotImplemented: If a 501 response code is received
+        :raises ServerFault: If a 500 response code is received
         :raises UnexpectedResponseCode: If a response code above 400 is
-                                        recieved and it doesn't fall into any
+                                        received and it doesn't fall into any
                                         of the handled checks
         """
         # if extra_headers is True
