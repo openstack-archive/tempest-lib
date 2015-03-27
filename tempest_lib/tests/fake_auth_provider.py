@@ -22,6 +22,9 @@ class FakeAuthProvider(object):
     def auth_request(self, method, url, headers=None, body=None, filters=None):
         return url, headers, body
 
+    def base_url(self, filters, auth_data=None):
+        return "https://example.com"
+
 
 class FakeCredentials(object):
 
