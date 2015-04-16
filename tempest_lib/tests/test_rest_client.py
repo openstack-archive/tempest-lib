@@ -31,8 +31,9 @@ class BaseRestClientTestClass(base.TestCase):
 
     def setUp(self):
         super(BaseRestClientTestClass, self).setUp()
+        self.fake_auth_provider = fake_auth_provider.FakeAuthProvider()
         self.rest_client = rest_client.RestClient(
-            fake_auth_provider.FakeAuthProvider(), None, None)
+            self.fake_auth_provider, None, None)
         self.stubs.Set(httplib2.Http, 'request', self.fake_http.request)
         self.useFixture(mockpatch.PatchObject(self.rest_client,
                                               '_log_request'))
@@ -441,6 +442,13 @@ class TestRestClientUtils(BaseRestClientTestClass):
         self.rest_client._parse_resp = lambda x: [{'id': 'v1'}, {'id': 'v2'}]
         actual_resp, actual_versions = self.rest_client.get_versions()
         self.assertEqual(['v1', 'v2'], list(actual_versions))
+
+    def test__str__(self):
+        def get_token():
+            return "deadbeef"
+
+        self.fake_auth_provider.get_token = get_token
+        self.assertIsNotNone(str(self.rest_client))
 
 
 class TestProperties(BaseRestClientTestClass):
