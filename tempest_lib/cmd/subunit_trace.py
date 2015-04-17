@@ -190,7 +190,11 @@ def run_time():
     runtime = 0.0
     for k, v in RESULTS.items():
         for test in v:
-            runtime += float(get_duration(test['timestamps']).strip('s'))
+            test_dur = get_duration(test['timestamps']).strip('s')
+            # NOTE(toabctl): get_duration() can return an empty string
+            # which leads to a ValueError when casting to float
+            if test_dur:
+                runtime += float(test_dur)
     return runtime
 
 
