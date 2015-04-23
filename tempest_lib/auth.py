@@ -17,13 +17,10 @@ import abc
 import copy
 import datetime
 import re
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urlparse
 
 from oslo_log import log as logging
 import six
+from six.moves.urllib import parse as urlparse
 
 from tempest_lib import exceptions
 from tempest_lib.services.identity.v2 import token_client as json_v2id
