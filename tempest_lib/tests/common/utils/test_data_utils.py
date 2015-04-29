@@ -56,6 +56,20 @@ class TestDataUtils(base.TestCase):
         actual2 = data_utils.rand_name(prefix='prefix-str')
         self.assertNotEqual(actual, actual2)
 
+    def test_rand_password(self):
+        actual = data_utils.rand_password()
+        self.assertIsInstance(actual, str)
+        self.assertRegexpMatches(actual, "[A-Za-z0-9~!@#$%^&*_=+]{15,}")
+        actual2 = data_utils.rand_password()
+        self.assertNotEqual(actual, actual2)
+
+    def test_rand_password_with_len(self):
+        actual = data_utils.rand_password(8)
+        self.assertIsInstance(actual, str)
+        self.assertRegexpMatches(actual, "[A-Za-z0-9~!@#$%^&*_=+]{8}")
+        actual2 = data_utils.rand_password(8)
+        self.assertNotEqual(actual, actual2)
+
     def test_rand_url(self):
         actual = data_utils.rand_url()
         self.assertIsInstance(actual, str)
