@@ -47,7 +47,10 @@ class TempestException(Exception):
 
 class RestClientException(TempestException,
                           testtools.TestCase.failureException):
-    pass
+    def __init__(self, resp_body, *args, **kwargs):
+        self.resp_body = resp_body
+        message = kwargs.get("message", resp_body)
+        super(RestClientException, self).__init__(message, *args, **kwargs)
 
 
 class InvalidHttpSuccessCode(RestClientException):

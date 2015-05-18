@@ -436,7 +436,10 @@ class RestClient(object):
                                    req_body, resp_body, caller_name, extra)
 
     def _parse_resp(self, body):
-        body = json.loads(body)
+        try:
+            body = json.loads(body)
+        except ValueError:
+            return body
 
         # We assume, that if the first value of the deserialized body's
         # item set is a dict or a list, that we just return the first value
@@ -666,12 +669,18 @@ class RestClient(object):
             raise exceptions.InvalidContentType(str(resp.status))
 
         if resp.status == 401:
+            if parse_resp:
+                resp_body = self._parse_resp(resp_body)
             raise exceptions.Unauthorized(resp_body)
 
         if resp.status == 403:
+            if parse_resp:
+                resp_body = self._parse_resp(resp_body)
             raise exceptions.Forbidden(resp_body)
 
         if resp.status == 404:
+            if parse_resp:
+                resp_body = self._parse_resp(resp_body)
             raise exceptions.NotFound(resp_body)
 
         if resp.status == 400:
@@ -731,7 +740,7 @@ class RestClient(object):
             if resp.status == 501:
                 raise exceptions.NotImplemented(message)
             else:
-                raise exceptions.ServerFault(message)
+                raise exceptions.ServerFault(resp_body, message=message)
 
         if resp.status >= 400:
             raise exceptions.UnexpectedResponseCode(str(resp.status))

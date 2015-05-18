@@ -361,11 +361,86 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
                           self.rest_client._error_checker,
                           **self.set_data("501"))
 
+    def test_response_400_with_dict(self):
+        r_body = '{"resp_body": {"err": "fake_resp_body"}}'
+        e = self.assertRaises(exceptions.BadRequest,
+                              self.rest_client._error_checker,
+                              **self.set_data("400", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_401_with_dict(self):
+        r_body = '{"resp_body": {"err": "fake_resp_body"}}'
+        e = self.assertRaises(exceptions.Unauthorized,
+                              self.rest_client._error_checker,
+                              **self.set_data("401", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_403_with_dict(self):
+        r_body = '{"resp_body": {"err": "fake_resp_body"}}'
+        e = self.assertRaises(exceptions.Forbidden,
+                              self.rest_client._error_checker,
+                              **self.set_data("403", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_404_with_dict(self):
+        r_body = '{"resp_body": {"err": "fake_resp_body"}}'
+        e = self.assertRaises(exceptions.NotFound,
+                              self.rest_client._error_checker,
+                              **self.set_data("404", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_404_with_invalid_dict(self):
+        r_body = '{"foo": "bar"]'
+        e = self.assertRaises(exceptions.NotFound,
+                              self.rest_client._error_checker,
+                              **self.set_data("404", r_body=r_body))
+
+        expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_409_with_dict(self):
+        r_body = '{"resp_body": {"err": "fake_resp_body"}}'
+        e = self.assertRaises(exceptions.Conflict,
+                              self.rest_client._error_checker,
+                              **self.set_data("409", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
     def test_response_500_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        self.assertRaises(exceptions.ServerFault,
-                          self.rest_client._error_checker,
-                          **self.set_data("500", r_body=r_body))
+        e = self.assertRaises(exceptions.ServerFault,
+                              self.rest_client._error_checker,
+                              **self.set_data("500", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
 
     def test_response_501_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
