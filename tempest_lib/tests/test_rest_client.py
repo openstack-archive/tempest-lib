@@ -464,7 +464,7 @@ class TestRestClientErrorCheckerTEXT(TestRestClientErrorCheckerJSON):
         # This test is required only in one exemplar
         # Any response code, that bigger than 400, and not in
         # (401, 403, 404, 409, 413, 422, 500, 501)
-        self.assertRaises(exceptions.InvalidContentType,
+        self.assertRaises(exceptions.UnexpectedContentType,
                           self.rest_client._error_checker,
                           **self.set_data("405", enc="fake_enc"))
 

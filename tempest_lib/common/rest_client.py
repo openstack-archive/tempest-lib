@@ -583,9 +583,8 @@ class RestClient(object):
         :rtype: tuple
         :return: a tuple with the first entry containing the response headers
                  and the second the response body
-        :raises InvalidContentType: If the content-type of the response isn't
-                                    an expect type or a 415 response code is
-                                    received
+        :raises UnexpectedContentType: If the content-type of the response
+                                       isn't an expect type
         :raises Unauthorized: If a 401 response code is received
         :raises Forbidden: If a 403 response code is received
         :raises NotFound: If a 404 response code is received
@@ -595,6 +594,7 @@ class RestClient(object):
                           not in the response body
         :raises RateLimitExceeded: If a 413 response code is received and
                                    over_limit is in the response body
+        :raises InvalidContentType: If a 415 response code is received
         :raises UnprocessableEntity: If a 422 response code is received
         :raises InvalidHTTPResponseBody: The response body wasn't valid JSON
                                          and couldn't be parsed
@@ -670,7 +670,7 @@ class RestClient(object):
         elif ctype.lower() in TXT_ENC:
             parse_resp = False
         else:
-            raise exceptions.InvalidContentType(str(resp.status))
+            raise exceptions.UnexpectedContentType(str(resp.status))
 
         if resp.status == 401:
             if parse_resp:
