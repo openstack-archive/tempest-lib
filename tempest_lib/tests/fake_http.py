@@ -34,7 +34,7 @@ class fake_httplib2(object):
             }
             return (fake_headers, return_obj)
         elif isinstance(self.return_type, int):
-            body = "fake_body"
+            body = body or "fake_body"
             header_info = {
                 'content-type': 'text/plain',
                 'status': str(self.return_type),
