@@ -861,3 +861,169 @@ class TestRestClientJSONHeaderSchemaValidation(TestJSONSchemaValidationBase):
                                self.rest_client.validate_response,
                                self.schema, resp, resp_body)
         self.assertIn("HTTP response header is invalid", ex._error_string)
+
+
+class TestRestClientJSONSchemaFormatValidation(TestJSONSchemaValidationBase):
+
+    schema = {
+        'status_code': [200],
+        'response_body': {
+            'type': 'object',
+            'properties': {
+                'foo': {
+                    'type': 'string',
+                    'format': 'email'
+                }
+            },
+            'required': ['foo']
+        }
+    }
+
+    def test_validate_format_pass(self):
+        body = {'foo': 'example@example.com'}
+        self._test_validate_pass(self.schema, body)
+
+    def test_validate_format_fail(self):
+        body = {'foo': 'wrong_email'}
+        self._test_validate_fail(self.schema, body)
+
+    def test_validate_formats_in_oneOf_pass(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'oneOf': [
+                            {'format': 'ipv4'},
+                            {'format': 'ipv6'}
+                        ]
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': '10.0.0.0'}
+        self._test_validate_pass(schema, body)
+        body = {'foo': 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329'}
+        self._test_validate_pass(schema, body)
+
+    def test_validate_formats_in_oneOf_fail_both_match(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'oneOf': [
+                            {'format': 'ipv4'},
+                            {'format': 'ipv4'}
+                        ]
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': '10.0.0.0'}
+        self._test_validate_fail(schema, body)
+
+    def test_validate_formats_in_oneOf_fail_no_match(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'oneOf': [
+                            {'format': 'ipv4'},
+                            {'format': 'ipv6'}
+                        ]
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 'wrong_ip_format'}
+        self._test_validate_fail(schema, body)
+
+    def test_validate_formats_in_anyOf_pass(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'anyOf': [
+                            {'format': 'ipv4'},
+                            {'format': 'ipv6'}
+                        ]
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': '10.0.0.0'}
+        self._test_validate_pass(schema, body)
+        body = {'foo': 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329'}
+        self._test_validate_pass(schema, body)
+
+    def test_validate_formats_in_anyOf_pass_both_match(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'anyOf': [
+                            {'format': 'ipv4'},
+                            {'format': 'ipv4'}
+                        ]
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': '10.0.0.0'}
+        self._test_validate_pass(schema, body)
+
+    def test_validate_formats_in_anyOf_fail_no_match(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'anyOf': [
+                            {'format': 'ipv4'},
+                            {'format': 'ipv6'}
+                        ]
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 'wrong_ip_format'}
+        self._test_validate_fail(schema, body)
+
+    def test_validate_formats_pass_for_unknow_format(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': 'string',
+                        'format': 'UNKNOWN'
+                    }
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 'example@example.com'}
+        self._test_validate_pass(schema, body)
