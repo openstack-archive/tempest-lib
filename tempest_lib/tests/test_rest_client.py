@@ -642,3 +642,222 @@ class TestResponseBodyList(base.TestCase):
         actual = rest_client.ResponseBodyList(response, body)
         self.assertEqual("response: %s\nBody: %s" % (response, body),
                          str(actual))
+
+
+class TestJSONSchemaValidationBase(base.TestCase):
+
+    class Response(dict):
+
+        def __getattr__(self, attr):
+            return self[attr]
+
+        def __setattr__(self, attr, value):
+            self[attr] = value
+
+    def setUp(self):
+        super(TestJSONSchemaValidationBase, self).setUp()
+        self.fake_auth_provider = fake_auth_provider.FakeAuthProvider()
+        self.rest_client = rest_client.RestClient(
+            self.fake_auth_provider, None, None)
+
+    def _test_validate_pass(self, schema, resp_body, status=200):
+        resp = self.Response()
+        resp.status = status
+        self.rest_client.validate_response(schema, resp, resp_body)
+
+    def _test_validate_fail(self, schema, resp_body, status=200,
+                            error_msg="HTTP response body is invalid"):
+        resp = self.Response()
+        resp.status = status
+        ex = self.assertRaises(exceptions.InvalidHTTPResponseBody,
+                               self.rest_client.validate_response,
+                               schema, resp, resp_body)
+        self.assertIn(error_msg, ex._error_string)
+
+
+class TestRestClientJSONSchemaValidation(TestJSONSchemaValidationBase):
+
+    schema = {
+        'status_code': [200],
+        'response_body': {
+            'type': 'object',
+            'properties': {
+                'foo': {
+                    'type': 'integer',
+                },
+            },
+            'required': ['foo']
+        }
+    }
+
+    def test_validate_pass(self):
+        body = {'foo': 12}
+        self._test_validate_pass(self.schema, body)
+
+    def test_validate_not_http_success_code(self):
+        schema = {
+            'status_code': [200]
+        }
+        body = {}
+        self._test_validate_pass(schema, body, status=400)
+
+    def test_validate_multiple_allowed_type(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {
+                        'type': ['integer', 'string'],
+                    },
+                },
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 12}
+        self._test_validate_pass(schema, body)
+        body = {'foo': '12'}
+        self._test_validate_pass(schema, body)
+
+    def test_validate_enable_additional_property_pass(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {'type': 'integer'}
+                },
+                'additionalProperties': True,
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 12, 'foo2': 'foo2value'}
+        self._test_validate_pass(schema, body)
+
+    def test_validate_disable_additional_property_pass(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {'type': 'integer'}
+                },
+                'additionalProperties': False,
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 12}
+        self._test_validate_pass(schema, body)
+
+    def test_validate_disable_additional_property_fail(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'foo': {'type': 'integer'}
+                },
+                'additionalProperties': False,
+                'required': ['foo']
+            }
+        }
+        body = {'foo': 12, 'foo2': 'foo2value'}
+        self._test_validate_fail(schema, body)
+
+    def test_validate_wrong_status_code(self):
+        schema = {
+            'status_code': [202]
+        }
+        body = {}
+        resp = self.Response()
+        resp.status = 200
+        ex = self.assertRaises(exceptions.InvalidHttpSuccessCode,
+                               self.rest_client.validate_response,
+                               schema, resp, body)
+        self.assertIn("Unexpected http success status code", ex._error_string)
+
+    def test_validate_wrong_attribute_type(self):
+        body = {'foo': 1.2}
+        self._test_validate_fail(self.schema, body)
+
+    def test_validate_unexpected_response_body(self):
+        schema = {
+            'status_code': [200],
+        }
+        body = {'foo': 12}
+        self._test_validate_fail(
+            schema, body,
+            error_msg="HTTP response body should not exist")
+
+    def test_validate_missing_response_body(self):
+        body = {}
+        self._test_validate_fail(self.schema, body)
+
+    def test_validate_missing_required_attribute(self):
+        body = {'notfoo': 12}
+        self._test_validate_fail(self.schema, body)
+
+    def test_validate_response_body_not_list(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'list_items': {
+                        'type': 'array',
+                        'items': {'foo': {'type': 'integer'}}
+                    }
+                },
+                'required': ['list_items'],
+            }
+        }
+        body = {'foo': 12}
+        self._test_validate_fail(schema, body)
+
+    def test_validate_response_body_list_pass(self):
+        schema = {
+            'status_code': [200],
+            'response_body': {
+                'type': 'object',
+                'properties': {
+                    'list_items': {
+                        'type': 'array',
+                        'items': {'foo': {'type': 'integer'}}
+                    }
+                },
+                'required': ['list_items'],
+            }
+        }
+        body = {'list_items': [{'foo': 12}, {'foo': 10}]}
+        self._test_validate_pass(schema, body)
+
+
+class TestRestClientJSONHeaderSchemaValidation(TestJSONSchemaValidationBase):
+
+    schema = {
+        'status_code': [200],
+        'response_header': {
+            'type': 'object',
+            'properties': {
+                'foo': {'type': 'integer'}
+            },
+            'required': ['foo']
+        }
+    }
+
+    def test_validate_header_schema_pass(self):
+        resp_body = {}
+        resp = self.Response()
+        resp.status = 200
+        resp.foo = 12
+        self.rest_client.validate_response(self.schema, resp, resp_body)
+
+    def test_validate_header_schema_fail(self):
+        resp_body = {}
+        resp = self.Response()
+        resp.status = 200
+        resp.foo = 1.2
+        ex = self.assertRaises(exceptions.InvalidHTTPResponseHeader,
+                               self.rest_client.validate_response,
+                               self.schema, resp, resp_body)
+        self.assertIn("HTTP response header is invalid", ex._error_string)
