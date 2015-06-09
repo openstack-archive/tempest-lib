@@ -15,6 +15,7 @@
 import json
 
 import httplib2
+import jsonschema
 from oslotest import mockpatch
 import six
 
@@ -1027,3 +1028,24 @@ class TestRestClientJSONSchemaFormatValidation(TestJSONSchemaValidationBase):
         }
         body = {'foo': 'example@example.com'}
         self._test_validate_pass(schema, body)
+
+
+class TestRestClientJSONSchemaValidatorVersion(TestJSONSchemaValidationBase):
+
+    schema = {
+        'status_code': [200],
+        'response_body': {
+            'type': 'object',
+            'properties': {
+                'foo': {'type': 'string'}
+            }
+        }
+    }
+
+    def test_current_json_schema_validator_version(self):
+        with mockpatch.PatchObject(jsonschema.Draft4Validator,
+                                   "check_schema") as chk_schema:
+            body = {'foo': 'test'}
+            self._test_validate_pass(self.schema, body)
+            chk_schema.mock.assert_called_once_with(
+                self.schema['response_body'])

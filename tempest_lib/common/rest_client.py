@@ -34,7 +34,8 @@ MAX_RECURSION_DEPTH = 2
 # All the successful HTTP status codes from RFC 7231 & 4918
 HTTP_SUCCESS = (200, 201, 202, 203, 204, 205, 206, 207)
 
-# JSON Schema format checker used for JSON Schema validation
+# JSON Schema validator and format checker used for JSON Schema validation
+JSONSCHEMA_VALIDATOR = jsonschema.Draft4Validator
 FORMAT_CHECKER = jsonschema.draft4_format_checker
 
 
@@ -809,6 +810,7 @@ class RestClient(object):
             if body_schema:
                 try:
                     jsonschema.validate(body, body_schema,
+                                        cls=JSONSCHEMA_VALIDATOR,
                                         format_checker=FORMAT_CHECKER)
                 except jsonschema.ValidationError as ex:
                     msg = ("HTTP response body is invalid (%s)") % ex
@@ -823,6 +825,7 @@ class RestClient(object):
             if header_schema:
                 try:
                     jsonschema.validate(resp, header_schema,
+                                        cls=JSONSCHEMA_VALIDATOR,
                                         format_checker=FORMAT_CHECKER)
                 except jsonschema.ValidationError as ex:
                     msg = ("HTTP response header is invalid (%s)") % ex
