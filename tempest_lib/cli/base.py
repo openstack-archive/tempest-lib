@@ -285,29 +285,6 @@ class CLIClient(object):
         return self.cmd_with_auth(
             'neutron', action, flags, params, fail_ok, merge_stderr)
 
-    def neutron_debug(self, action, flags='', params='', fail_ok=False,
-                      endpoint_type='publicURL', merge_stderr=False):
-        """Executes neutron-debug command for the given action.
-
-        :param action: the cli command to run using neutron
-        :type action: string
-        :param flags: any optional cli flags to use
-        :type flags: string
-        :param params: any optional positional args to use
-        :type params: string
-        :param fail_ok: if True an exception is not raised when the
-                        cli return code is non-zero
-        :type fail_ok: boolean
-        :param endpoint_type: the type of endpoint for the service
-        :type endpoint_type: string
-        :param merge_stderr: if True the stderr buffer is merged into stdout
-        :type merge_stderr: boolean
-        """
-
-        return execute(
-            'neutron-debug', action, flags, params, fail_ok, merge_stderr,
-            self.cli_dir)
-
     def sahara(self, action, flags='', params='',
                fail_ok=False, endpoint_type='publicURL', merge_stderr=True):
         """Executes sahara command for the given action.
