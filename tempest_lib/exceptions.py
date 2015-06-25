@@ -53,77 +53,93 @@ class RestClientException(TempestException,
         super(RestClientException, self).__init__(message, *args, **kwargs)
 
 
-class InvalidHttpSuccessCode(RestClientException):
+class OtherRestClientException(RestClientException):
+    pass
+
+
+class ServerRestClientException(RestClientException):
+    pass
+
+
+class ClientRestClientException(RestClientException):
+    pass
+
+
+class InvalidHttpSuccessCode(OtherRestClientException):
     message = "The success code is different than the expected one"
 
 
-class NotFound(RestClientException):
+class NotFound(ClientRestClientException):
     message = "Object not found"
 
 
-class Unauthorized(RestClientException):
+class Unauthorized(ClientRestClientException):
     message = 'Unauthorized'
 
 
-class Forbidden(RestClientException):
+class Forbidden(ClientRestClientException):
     message = "Forbidden"
 
 
-class TimeoutException(RestClientException):
+class TimeoutException(OtherRestClientException):
     message = "Request timed out"
 
 
-class BadRequest(RestClientException):
+class BadRequest(ClientRestClientException):
     message = "Bad request"
 
 
-class UnprocessableEntity(RestClientException):
+class UnprocessableEntity(ClientRestClientException):
     message = "Unprocessable entity"
 
 
-class RateLimitExceeded(RestClientException):
+class RateLimitExceeded(ClientRestClientException):
     message = "Rate limit exceeded"
 
 
-class OverLimit(RestClientException):
+class OverLimit(ClientRestClientException):
     message = "Quota exceeded"
 
 
-class ServerFault(RestClientException):
+class ServerFault(ServerRestClientException):
     message = "Got server fault"
 
 
-class NotImplemented(RestClientException):
+class NotImplemented(ServerRestClientException):
     message = "Got NotImplemented error"
 
 
-class Conflict(RestClientException):
+class Conflict(ClientRestClientException):
     message = "An object with that identifier already exists"
 
 
-class ResponseWithNonEmptyBody(RestClientException):
+class ResponseWithNonEmptyBody(OtherRestClientException):
     message = ("RFC Violation! Response with %(status)d HTTP Status Code "
                "MUST NOT have a body")
 
 
-class ResponseWithEntity(RestClientException):
+class ResponseWithEntity(OtherRestClientException):
     message = ("RFC Violation! Response with 205 HTTP Status Code "
                "MUST NOT have an entity")
 
 
-class InvalidHTTPResponseBody(RestClientException):
+class InvalidHTTPResponseBody(OtherRestClientException):
     message = "HTTP response body is invalid json or xml"
 
 
-class InvalidHTTPResponseHeader(RestClientException):
+class InvalidHTTPResponseHeader(OtherRestClientException):
     message = "HTTP response header is invalid"
 
 
-class InvalidContentType(RestClientException):
+class InvalidContentType(ClientRestClientException):
     message = "Invalid content type provided"
 
 
-class UnexpectedResponseCode(RestClientException):
+class UnexpectedContentType(OtherRestClientException):
+    message = "Unexpected content type provided"
+
+
+class UnexpectedResponseCode(OtherRestClientException):
     message = "Unexpected response code received"
 
 
