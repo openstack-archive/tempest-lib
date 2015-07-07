@@ -30,7 +30,7 @@ class TestTokenClientV2(base.TestCase):
         self.fake_200_http = fake_http.fake_httplib2(return_type=200)
 
     def test_auth(self):
-        token_client_v2 = token_client.TokenClientJSON('fake_url')
+        token_client_v2 = token_client.TokenClient('fake_url')
         post_mock = self.useFixture(mockpatch.PatchObject(
             token_client_v2, 'post', return_value=self.fake_200_http.request(
                 'fake_url', body={'access': {'token': 'fake_token'}})))
@@ -48,7 +48,7 @@ class TestTokenClientV2(base.TestCase):
                                                body=req_dict)
 
     def test_auth_with_tenant(self):
-        token_client_v2 = token_client.TokenClientJSON('fake_url')
+        token_client_v2 = token_client.TokenClient('fake_url')
         post_mock = self.useFixture(mockpatch.PatchObject(
             token_client_v2, 'post', return_value=self.fake_200_http.request(
                 'fake_url', body={'access': {'token': 'fake_token'}})))
@@ -67,7 +67,7 @@ class TestTokenClientV2(base.TestCase):
                                                body=req_dict)
 
     def test_request_with_str_body(self):
-        token_client_v2 = token_client.TokenClientJSON('fake_url')
+        token_client_v2 = token_client.TokenClient('fake_url')
         self.useFixture(mockpatch.PatchObject(
             token_client_v2, 'raw_request', return_value=(
                 httplib2.Response({'status': '200'}),
@@ -77,7 +77,7 @@ class TestTokenClientV2(base.TestCase):
         self.assertIsInstance(body, dict)
 
     def test_request_with_bytes_body(self):
-        token_client_v2 = token_client.TokenClientJSON('fake_url')
+        token_client_v2 = token_client.TokenClient('fake_url')
         self.useFixture(mockpatch.PatchObject(
             token_client_v2, 'raw_request', return_value=(
                 httplib2.Response({'status': '200'}),

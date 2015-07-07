@@ -248,7 +248,7 @@ class KeystoneAuthProvider(AuthProvider):
 class KeystoneV2AuthProvider(KeystoneAuthProvider):
 
     def _auth_client(self, auth_url):
-        return json_v2id.TokenClientJSON(
+        return json_v2id.TokenClient(
             auth_url, disable_ssl_certificate_validation=self.dsvm,
             ca_certs=self.ca_certs, trace_requests=self.trace_requests)
 
@@ -326,7 +326,7 @@ class KeystoneV2AuthProvider(KeystoneAuthProvider):
 class KeystoneV3AuthProvider(KeystoneAuthProvider):
 
     def _auth_client(self, auth_url):
-        return json_v3id.V3TokenClientJSON(
+        return json_v3id.V3TokenClient(
             auth_url, disable_ssl_certificate_validation=self.dsvm,
             ca_certs=self.ca_certs, trace_requests=self.trace_requests)
 

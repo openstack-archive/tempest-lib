@@ -13,16 +13,19 @@
 #    under the License.
 
 import json
+
+from oslo_log import log as logging
+
 from tempest_lib.common import rest_client
 from tempest_lib import exceptions
 
 
-class TokenClientJSON(rest_client.RestClient):
+class TokenClient(rest_client.RestClient):
 
     def __init__(self, auth_url, disable_ssl_certificate_validation=None,
                  ca_certs=None, trace_requests=None):
         dscv = disable_ssl_certificate_validation
-        super(TokenClientJSON, self).__init__(
+        super(TokenClient, self).__init__(
             None, None, None, disable_ssl_certificate_validation=dscv,
             ca_certs=ca_certs, trace_requests=trace_requests)
 
@@ -101,3 +104,15 @@ class TokenClientJSON(rest_client.RestClient):
             return body['token']['id'], body
         else:
             return body['token']['id']
+
+
+class TokenClientJSON(TokenClient):
+    LOG = logging.getLogger(__name__)
+
+    def _warn(self):
+        self.LOG.warning("%s class was deprecated and renamed to %s" %
+                         (self.__class__.__name__, 'TokenClient'))
+
+    def __init__(self, *args, **kwargs):
+        self._warn()
+        super(TokenClientJSON, self).__init__(*args, **kwargs)

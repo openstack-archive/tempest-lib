@@ -67,7 +67,7 @@ class KeystoneV2CredentialsTests(CredentialsTests):
 
     identity_response = fake_identity._fake_v2_response
     credentials_class = auth.KeystoneV2Credentials
-    tokenclient_class = v2_client.TokenClientJSON
+    tokenclient_class = v2_client.TokenClient
     identity_version = 'v2'
 
     def setUp(self):
@@ -147,7 +147,7 @@ class KeystoneV3CredentialsTests(KeystoneV2CredentialsTests):
 
     credentials_class = auth.KeystoneV3Credentials
     identity_response = fake_identity._fake_v3_response
-    tokenclient_class = v3_client.V3TokenClientJSON
+    tokenclient_class = v3_client.V3TokenClient
     identity_version = 'v3'
 
     def test_is_not_valid(self):

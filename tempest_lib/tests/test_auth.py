@@ -120,7 +120,7 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
 
     def setUp(self):
         super(TestKeystoneV2AuthProvider, self).setUp()
-        self.stubs.Set(v2_client.TokenClientJSON, 'raw_request',
+        self.stubs.Set(v2_client.TokenClient, 'raw_request',
                        fake_identity._fake_v2_response)
         self.target_url = 'test_api'
 
@@ -341,7 +341,7 @@ class TestKeystoneV3AuthProvider(TestKeystoneV2AuthProvider):
 
     def setUp(self):
         super(TestKeystoneV3AuthProvider, self).setUp()
-        self.stubs.Set(v3_client.V3TokenClientJSON, 'raw_request',
+        self.stubs.Set(v3_client.V3TokenClient, 'raw_request',
                        fake_identity._fake_v3_response)
 
     def _get_fake_alt_identity(self):
