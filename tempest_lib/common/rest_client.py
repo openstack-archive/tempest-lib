@@ -439,9 +439,16 @@ class RestClient(object):
             self._log_request_full(method, req_url, resp, secs, req_headers,
                                    req_body, resp_body, caller_name, extra)
 
+    def _json_loads(self, resp_body):
+        if isinstance(resp_body, bytes):
+            resp_body = json.loads(resp_body.decode('utf8'))
+        else:
+            resp_body = json.loads(resp_body)
+        return resp_body
+
     def _parse_resp(self, body):
         try:
-            body = json.loads(body)
+            body = self._json_loads(body)
         except ValueError:
             return body
 

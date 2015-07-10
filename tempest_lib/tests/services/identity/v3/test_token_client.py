@@ -14,6 +14,7 @@
 
 import json
 
+import httplib2
 from oslotest import mockpatch
 
 from tempest_lib.common import rest_client
@@ -79,3 +80,23 @@ class TestTokenClientV2(base.TestCase):
 
         post_mock.mock.assert_called_once_with('fake_url/auth/tokens',
                                                body=req_dict)
+
+    def test_request_with_str_body(self):
+        token_client_v3 = token_client.V3TokenClientJSON('fake_url')
+        self.useFixture(mockpatch.PatchObject(
+            token_client_v3, 'raw_request', return_value=(
+                httplib2.Response({"status": "200"}),
+                str('{"access": {"token": "fake_token"}}'))))
+        resp, body = token_client_v3.request('GET', 'fake_uri')
+        self.assertIsInstance(resp, httplib2.Response)
+        self.assertIsInstance(body, dict)
+
+    def test_request_with_bytes_body(self):
+        token_client_v3 = token_client.V3TokenClientJSON('fake_url')
+        self.useFixture(mockpatch.PatchObject(
+            token_client_v3, 'raw_request', return_value=(
+                httplib2.Response({"status": "200"}),
+                bytes(b'{"access": {"token": "fake_token"}}'))))
+        resp, body = token_client_v3.request('GET', 'fake_uri')
+        self.assertIsInstance(resp, httplib2.Response)
+        self.assertIsInstance(body, dict)

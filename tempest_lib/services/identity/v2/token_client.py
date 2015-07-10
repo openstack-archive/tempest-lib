@@ -85,15 +85,13 @@ class TokenClientJSON(rest_client.RestClient):
         self._log_request(method, url, resp)
 
         if resp.status in [401, 403]:
-            resp_body = json.loads(resp_body)
+            resp_body = self._json_loads(resp_body)
             raise exceptions.Unauthorized(resp_body['error']['message'])
         elif resp.status not in [200, 201]:
             raise exceptions.IdentityError(
                 'Unexpected status code {0}'.format(resp.status))
 
-        if isinstance(resp_body, str):
-            resp_body = json.loads(resp_body)
-        return resp, resp_body
+        return resp, self._json_loads(resp_body)
 
     def get_token(self, user, password, tenant, auth_data=False):
         """Returns (token id, token data) for supplied credentials."""
