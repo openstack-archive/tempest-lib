@@ -306,67 +306,56 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
     def test_response_less_than_400(self):
         self.rest_client._error_checker(**self.set_data("399"))
 
+    def _test_error_checker(self, exception_type, data):
+        e = self.assertRaises(exception_type,
+                              self.rest_client._error_checker,
+                              **data)
+        self.assertEqual(e.resp, data['resp'])
+        self.assertTrue(hasattr(e, 'resp_body'))
+        return e
+
     def test_response_400(self):
-        self.assertRaises(exceptions.BadRequest,
-                          self.rest_client._error_checker,
-                          **self.set_data("400"))
+        self._test_error_checker(exceptions.BadRequest, self.set_data("400"))
 
     def test_response_401(self):
-        self.assertRaises(exceptions.Unauthorized,
-                          self.rest_client._error_checker,
-                          **self.set_data("401"))
+        self._test_error_checker(exceptions.Unauthorized, self.set_data("401"))
 
     def test_response_403(self):
-        self.assertRaises(exceptions.Forbidden,
-                          self.rest_client._error_checker,
-                          **self.set_data("403"))
+        self._test_error_checker(exceptions.Forbidden, self.set_data("403"))
 
     def test_response_404(self):
-        self.assertRaises(exceptions.NotFound,
-                          self.rest_client._error_checker,
-                          **self.set_data("404"))
+        self._test_error_checker(exceptions.NotFound, self.set_data("404"))
 
     def test_response_409(self):
-        self.assertRaises(exceptions.Conflict,
-                          self.rest_client._error_checker,
-                          **self.set_data("409"))
+        self._test_error_checker(exceptions.Conflict, self.set_data("409"))
 
     def test_response_413(self):
-        self.assertRaises(exceptions.OverLimit,
-                          self.rest_client._error_checker,
-                          **self.set_data("413"))
+        self._test_error_checker(exceptions.OverLimit, self.set_data("413"))
 
     def test_response_413_without_absolute_limit(self):
-        self.assertRaises(exceptions.RateLimitExceeded,
-                          self.rest_client._error_checker,
-                          **self.set_data("413", absolute_limit=False))
+        self._test_error_checker(exceptions.RateLimitExceeded,
+                                 self.set_data("413", absolute_limit=False))
 
     def test_response_415(self):
-        self.assertRaises(exceptions.InvalidContentType,
-                          self.rest_client._error_checker,
-                          **self.set_data("415"))
+        self._test_error_checker(exceptions.InvalidContentType,
+                                 self.set_data("415"))
 
     def test_response_422(self):
-        self.assertRaises(exceptions.UnprocessableEntity,
-                          self.rest_client._error_checker,
-                          **self.set_data("422"))
+        self._test_error_checker(exceptions.UnprocessableEntity,
+                                 self.set_data("422"))
 
     def test_response_500_with_text(self):
         # _parse_resp is expected to return 'str'
-        self.assertRaises(exceptions.ServerFault,
-                          self.rest_client._error_checker,
-                          **self.set_data("500"))
+        self._test_error_checker(exceptions.ServerFault, self.set_data("500"))
 
     def test_response_501_with_text(self):
-        self.assertRaises(exceptions.NotImplemented,
-                          self.rest_client._error_checker,
-                          **self.set_data("501"))
+        self._test_error_checker(exceptions.NotImplemented,
+                                 self.set_data("501"))
 
     def test_response_400_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        e = self.assertRaises(exceptions.BadRequest,
-                              self.rest_client._error_checker,
-                              **self.set_data("400", r_body=r_body))
+        e = self._test_error_checker(exceptions.BadRequest,
+                                     self.set_data("400", r_body=r_body))
 
         if self.c_type == 'application/json':
             expected = {"err": "fake_resp_body"}
@@ -376,9 +365,8 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
 
     def test_response_401_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        e = self.assertRaises(exceptions.Unauthorized,
-                              self.rest_client._error_checker,
-                              **self.set_data("401", r_body=r_body))
+        e = self._test_error_checker(exceptions.Unauthorized,
+                                     self.set_data("401", r_body=r_body))
 
         if self.c_type == 'application/json':
             expected = {"err": "fake_resp_body"}
@@ -388,9 +376,8 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
 
     def test_response_403_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        e = self.assertRaises(exceptions.Forbidden,
-                              self.rest_client._error_checker,
-                              **self.set_data("403", r_body=r_body))
+        e = self._test_error_checker(exceptions.Forbidden,
+                                     self.set_data("403", r_body=r_body))
 
         if self.c_type == 'application/json':
             expected = {"err": "fake_resp_body"}
@@ -400,9 +387,8 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
 
     def test_response_404_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        e = self.assertRaises(exceptions.NotFound,
-                              self.rest_client._error_checker,
-                              **self.set_data("404", r_body=r_body))
+        e = self._test_error_checker(exceptions.NotFound,
+                                     self.set_data("404", r_body=r_body))
 
         if self.c_type == 'application/json':
             expected = {"err": "fake_resp_body"}
@@ -412,18 +398,16 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
 
     def test_response_404_with_invalid_dict(self):
         r_body = '{"foo": "bar"]'
-        e = self.assertRaises(exceptions.NotFound,
-                              self.rest_client._error_checker,
-                              **self.set_data("404", r_body=r_body))
+        e = self._test_error_checker(exceptions.NotFound,
+                                     self.set_data("404", r_body=r_body))
 
         expected = r_body
         self.assertEqual(expected, e.resp_body)
 
     def test_response_409_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        e = self.assertRaises(exceptions.Conflict,
-                              self.rest_client._error_checker,
-                              **self.set_data("409", r_body=r_body))
+        e = self._test_error_checker(exceptions.Conflict,
+                                     self.set_data("409", r_body=r_body))
 
         if self.c_type == 'application/json':
             expected = {"err": "fake_resp_body"}
@@ -433,9 +417,8 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
 
     def test_response_500_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        e = self.assertRaises(exceptions.ServerFault,
-                              self.rest_client._error_checker,
-                              **self.set_data("500", r_body=r_body))
+        e = self._test_error_checker(exceptions.ServerFault,
+                                     self.set_data("500", r_body=r_body))
 
         if self.c_type == 'application/json':
             expected = {"err": "fake_resp_body"}
@@ -445,16 +428,14 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
 
     def test_response_501_with_dict(self):
         r_body = '{"resp_body": {"err": "fake_resp_body"}}'
-        self.assertRaises(exceptions.NotImplemented,
-                          self.rest_client._error_checker,
-                          **self.set_data("501", r_body=r_body))
+        self._test_error_checker(exceptions.NotImplemented,
+                                 self.set_data("501", r_body=r_body))
 
     def test_response_bigger_than_400(self):
         # Any response code, that bigger than 400, and not in
         # (401, 403, 404, 409, 413, 422, 500, 501)
-        self.assertRaises(exceptions.UnexpectedResponseCode,
-                          self.rest_client._error_checker,
-                          **self.set_data("402"))
+        self._test_error_checker(exceptions.UnexpectedResponseCode,
+                                 self.set_data("402"))
 
 
 class TestRestClientErrorCheckerTEXT(TestRestClientErrorCheckerJSON):
@@ -464,9 +445,8 @@ class TestRestClientErrorCheckerTEXT(TestRestClientErrorCheckerJSON):
         # This test is required only in one exemplar
         # Any response code, that bigger than 400, and not in
         # (401, 403, 404, 409, 413, 422, 500, 501)
-        self.assertRaises(exceptions.UnexpectedContentType,
-                          self.rest_client._error_checker,
-                          **self.set_data("405", enc="fake_enc"))
+        self._test_error_checker(exceptions.UnexpectedContentType,
+                                 self.set_data("405", enc="fake_enc"))
 
     def test_response_413_without_absolute_limit(self):
         # Skip this test because rest_client cannot get overLimit message
