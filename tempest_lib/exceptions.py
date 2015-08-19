@@ -48,6 +48,8 @@ class TempestException(Exception):
 class RestClientException(TempestException,
                           testtools.TestCase.failureException):
     def __init__(self, resp_body=None, *args, **kwargs):
+        if 'resp' in kwargs:
+            self.resp = kwargs.get('resp')
         self.resp_body = resp_body
         message = kwargs.get("message", resp_body)
         super(RestClientException, self).__init__(message, *args, **kwargs)
