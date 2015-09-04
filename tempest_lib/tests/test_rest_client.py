@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import copy
 import json
 
 import httplib2
@@ -671,9 +672,15 @@ class TestRestClientJSONSchemaValidation(TestJSONSchemaValidationBase):
         }
     }
 
-    def test_validate_pass(self):
+    def test_validate_pass_with_http_success_code(self):
         body = {'foo': 12}
-        self._test_validate_pass(self.schema, body)
+        self._test_validate_pass(self.schema, body, status=200)
+
+    def test_validate_pass_with_http_redirect_code(self):
+        body = {'foo': 12}
+        schema = copy.deepcopy(self.schema)
+        schema['status_code'] = 300
+        self._test_validate_pass(schema, body, status=300)
 
     def test_validate_not_http_success_code(self):
         schema = {

@@ -34,6 +34,9 @@ MAX_RECURSION_DEPTH = 2
 # All the successful HTTP status codes from RFC 7231 & 4918
 HTTP_SUCCESS = (200, 201, 202, 203, 204, 205, 206, 207)
 
+# All the redirection HTTP status codes from RFC 7231 & 4918
+HTTP_REDIRECTION = (300, 301, 302, 303, 304, 305, 306, 307)
+
 # JSON Schema validator and format checker used for JSON Schema validation
 JSONSCHEMA_VALIDATOR = jsonschema.Draft4Validator
 FORMAT_CHECKER = jsonschema.draft4_format_checker
@@ -223,9 +226,9 @@ class RestClient(object):
                       ).format(expected_code)
         if isinstance(expected_code, list):
             for code in expected_code:
-                assert code in HTTP_SUCCESS, assert_msg
+                assert code in HTTP_SUCCESS + HTTP_REDIRECTION, assert_msg
         else:
-            assert expected_code in HTTP_SUCCESS, assert_msg
+            assert expected_code in HTTP_SUCCESS + HTTP_REDIRECTION, assert_msg
 
         # NOTE(afazekas): the http status code above 400 is processed by
         # the _error_checker method
@@ -813,7 +816,7 @@ class RestClient(object):
         # code if it exists is something that we expect. This is explicitly
         # declared in the V3 API and so we should be able to export this in
         # the response schema. For now we'll ignore it.
-        if resp.status in HTTP_SUCCESS:
+        if resp.status in HTTP_SUCCESS + HTTP_REDIRECTION:
             cls.expected_success(schema['status_code'], resp.status)
 
             # Check the body of a response
