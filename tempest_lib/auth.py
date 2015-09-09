@@ -43,7 +43,18 @@ class AuthProvider(object):
         if self.check_credentials(credentials):
             self.credentials = credentials
         else:
-            raise TypeError("Invalid credentials")
+            if isinstance(credentials, Credentials):
+                password = credentials.get('password')
+                message = "Credentials are: " + str(credentials)
+                if password is None:
+                    message += " Password is not defined."
+                else:
+                    message += " Password is defined."
+                raise exceptions.InvalidCredentials(message)
+            else:
+                raise TypeError("credentials object is of type %s, which is"
+                                " not a valid Credentials object type." %
+                                credentials.__class__.__name__)
         self.cache = None
         self.alt_auth_data = None
         self.alt_part = None
@@ -521,7 +532,8 @@ class Credentials(object):
 
     def __str__(self):
         """Represent only attributes included in self.ATTRIBUTES"""
-        _repr = dict((k, getattr(self, k)) for k in self.ATTRIBUTES)
+        attrs = [attr for attr in self.ATTRIBUTES if attr is not 'password']
+        _repr = dict((k, getattr(self, k)) for k in attrs)
         return str(_repr)
 
     def __eq__(self, other):
