@@ -100,13 +100,15 @@ class Client(object):
     def _can_system_poll():
         return hasattr(select, 'poll')
 
-    def exec_command(self, cmd):
+    def exec_command(self, cmd, encoding="utf-8"):
         """Execute the specified command on the server
 
         Note that this method is reading whole command outputs to memory, thus
         shouldn't be used for large outputs.
 
         :param str cmd: Command to run at remote server.
+        :param str encoding: Encoding for result from paramiko.
+                             Result will not be decoded if None.
         :returns: data read from standard output of the command.
         :raises: SSHExecCommandFailed if command returns nonzero
                  status. The exception contains command status stderr content.
@@ -147,14 +149,17 @@ class Client(object):
                     err_data_chunks += err_chunk,
                 if channel.closed and not err_chunk and not out_chunk:
                     break
-            out_data = ''.join(out_data_chunks)
-            err_data = ''.join(err_data_chunks)
+            out_data = b''.join(out_data_chunks)
+            err_data = b''.join(err_data_chunks)
         # Just read from the channels
         else:
             out_file = channel.makefile('rb', self.buf_size)
             err_file = channel.makefile_stderr('rb', self.buf_size)
             out_data = out_file.read()
             err_data = err_file.read()
+        if encoding:
+            out_data = out_data.decode(encoding)
+            err_data = err_data.decode(encoding)
 
         if 0 != exit_status:
             raise exceptions.SSHExecCommandFailed(
