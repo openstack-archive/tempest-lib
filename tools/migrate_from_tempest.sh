@@ -66,11 +66,13 @@ cd -
 file_list=''
 for file in $files; do
     filename=`basename $file`
+    dirname=`dirname $file`
     if [ -n "$output_dir" ]; then
-        dest_file="$output_dir/$filename"
+        dirname="$output_dir"
     else
-        dest_file="tempest_lib/$filename"
+        dirname=`echo $dirname | sed s@tempest\/@tempest_lib/\@`
     fi
+    dest_file="$dirname/$filename"
     cp -r "$tmpdir/$file" "$dest_file"
     git add "$dest_file"
     if [[ -z "$file_list" ]]; then
