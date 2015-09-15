@@ -16,6 +16,7 @@
 import logging
 import os
 import shlex
+import six
 import subprocess
 
 from tempest_lib import base
@@ -50,7 +51,9 @@ def execute(cmd, action, flags='', params='', fail_ok=False,
     cmd = ' '.join([os.path.join(cli_dir, cmd),
                     flags, action, params])
     LOG.info("running: '%s'" % cmd)
-    cmd = shlex.split(cmd.encode('utf-8'))
+    if six.PY2:
+        cmd = cmd.encode('utf-8')
+    cmd = shlex.split(cmd)
     result = ''
     result_err = ''
     stdout = subprocess.PIPE
@@ -62,7 +65,10 @@ def execute(cmd, action, flags='', params='', fail_ok=False,
                                        cmd,
                                        result,
                                        result_err)
-    return result
+    if six.PY2:
+        return result
+    else:
+        return os.fsdecode(result)
 
 
 class CLIClient(object):
