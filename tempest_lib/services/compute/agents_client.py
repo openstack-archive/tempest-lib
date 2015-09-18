@@ -51,4 +51,5 @@ class AgentsClient(rest_client.RestClient):
         put_body = json.dumps({'para': kwargs})
         resp, body = self.put('os-agents/%s' % agent_id, put_body)
         body = json.loads(body)
+        self.validate_response(schema.update_agent, resp, body)
         return rest_client.ResponseBody(resp, body)

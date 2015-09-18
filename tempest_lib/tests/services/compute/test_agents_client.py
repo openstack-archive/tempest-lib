@@ -33,11 +33,8 @@ class TestAgentsClient(base.BaseComputeServiceTest):
     FAKE_UPDATE_AGENT = {
         "agent": {
             "url": "http://foo.com",
-            "hypervisor": "kvm",
             "md5hash": "md5",
             "version": "2",
-            "architecture": "x86_64",
-            "os": "linux",
             "agent_id": 1
         }
     }
