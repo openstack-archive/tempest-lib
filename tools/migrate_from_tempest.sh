@@ -101,5 +101,5 @@ rm -rf $tmpdir
 # Generate a migration commit
 commit_message="Migrated $file_list from tempest"
 pre_list=$"This migrates the above files from tempest. This includes tempest commits:"
-post_list=$"to see the commit history for these files refer to the above sha1s in the tempest repository"
+post_list=$"to see the commit history for these files refer to the above Change-Ids in the tempest repository"
 git commit -m "$commit_message" -m "$pre_list" -m "$CHANGE_LIST" -m "$post_list"
