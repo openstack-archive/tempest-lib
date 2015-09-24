@@ -15,13 +15,13 @@
 #    under the License.
 
 import collections
-import json
 import logging as real_logging
 import re
 import time
 
 import jsonschema
 from oslo_log import log as logging
+from oslo_serialization import jsonutils as json
 import six
 
 from tempest_lib.common import http
@@ -442,16 +442,9 @@ class RestClient(object):
             self._log_request_full(method, req_url, resp, secs, req_headers,
                                    req_body, resp_body, caller_name, extra)
 
-    def _json_loads(self, resp_body):
-        if isinstance(resp_body, bytes):
-            resp_body = json.loads(resp_body.decode('utf8'))
-        else:
-            resp_body = json.loads(resp_body)
-        return resp_body
-
     def _parse_resp(self, body):
         try:
-            body = self._json_loads(body)
+            body = json.loads(body)
         except ValueError:
             return body
 
