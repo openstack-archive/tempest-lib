@@ -55,6 +55,28 @@ create_agent = {
     }
 }
 
+update_agent = {
+    'status_code': [200],
+    'response_body': {
+        'type': 'object',
+        'properties': {
+            'agent': {
+                'type': 'object',
+                'properties': {
+                    'agent_id': {'type': ['integer', 'string']},
+                    'version': {'type': 'string'},
+                    'url': {'type': 'string', 'format': 'uri'},
+                    'md5hash': {'type': 'string'}
+                },
+                'additionalProperties': False,
+                'required': ['agent_id', 'version', 'url', 'md5hash']
+            }
+        },
+        'additionalProperties': False,
+        'required': ['agent']
+    }
+}
+
 delete_agent = {
     'status_code': [200]
 }
