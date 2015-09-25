@@ -528,7 +528,8 @@ class Credentials(object):
             if key in self.ATTRIBUTES:
                 setattr(self, key, attr[key])
             else:
-                raise exceptions.InvalidCredentials
+                msg = '%s is not a valid attr for %s' % (key, self.__class__)
+                raise exceptions.InvalidCredentials(msg)
 
     def __str__(self):
         """Represent only attributes included in self.ATTRIBUTES"""
