@@ -93,7 +93,11 @@ for file in $files; do
     if [[ -z "$file_list" ]]; then
         file_list="$filename"
     else
-        file_list="$file_list, $filename"
+        tmp_file_list="$file_list, $filename"
+        char_size=`echo $tmp_file_list | wc -c`
+        if [ "$char_size" -lt 27 ]; then
+            file_list="$file_list, $filename"
+        fi
     fi
 done
 # Cleanup temporary tempest repo
