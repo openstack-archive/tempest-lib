@@ -16,8 +16,9 @@
 import logging
 import os
 import shlex
-import six
 import subprocess
+
+import six
 
 from tempest_lib import base
 import tempest_lib.cli.output_parser
