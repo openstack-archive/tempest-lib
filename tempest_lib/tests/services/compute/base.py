@@ -13,7 +13,6 @@
 #    under the License.
 
 import httplib2
-
 from oslo_serialization import jsonutils as json
 from oslotest import mockpatch
 
