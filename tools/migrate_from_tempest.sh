@@ -76,16 +76,16 @@ for file in $files; do
 
     if [ $service_client -eq 1 ]; then
         # service_client module is not necessary in tempest-lib because rest_client can be used instead
-        sed -i s/"from tempest.common import service_client"/"from tempest_lib.common import rest_client"/ $dest_file
-        sed -i s/"service_client.ServiceClient"/"rest_client.RestClient"/  $dest_file
-        sed -i s/"service_client.ResponseBody"/"rest_client.ResponseBody"/ $dest_file
-        sed -i s/"from tempest\."/"from tempest_lib\."/ $dest_file
+        sed -i='' s/"from tempest.common import service_client"/"from tempest_lib.common import rest_client"/ $dest_file
+        sed -i='' s/"service_client.ServiceClient"/"rest_client.RestClient"/  $dest_file
+        sed -i='' s/"service_client.ResponseBody"/"rest_client.ResponseBody"/ $dest_file
+        sed -i='' s/"from tempest\."/"from tempest_lib\."/ $dest_file
 
         # Replace mocked path in unit tests
-        sed -i s/"tempest.common.rest_client"/"tempest_lib.common.rest_client"/ $dest_file
+        sed -i='' s/"tempest.common.rest_client"/"tempest_lib.common.rest_client"/ $dest_file
 
         # Remove ".json" from import line
-        sed -i -e "s/^\(from tempest_lib\.services\..*\)\.json\(.*\)/\1\2/" $dest_file
+        sed -i='' -e "s/^\(from tempest_lib\.services\..*\)\.json\(.*\)/\1\2/" $dest_file
     fi
 
     git add "$dest_file"
