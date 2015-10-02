@@ -102,7 +102,8 @@ rm -rf $tmpdir
 # Generate a migration commit
 commit_message="Migrated $file_list from tempest"
 pre_list=$"This migrates the above files from tempest. This includes tempest commits:"
-post_list=$"to see the commit history for these files refer to the above Change-Ids in the tempest repository"
+post_list=$"to see the commit history for these files refer to the above Change-Ids \nin the tempest repository."
+post_list=`echo -e $post_list`
 if [ $service_client -eq 1 ]; then
     bp_msg="Partially implements blueprint migrate-service-clients-to-tempest-lib"
 else
