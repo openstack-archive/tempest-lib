@@ -556,7 +556,7 @@ class Credentials(object):
         else:
             raise AttributeError
 
-    def get(self, item, default):
+    def get(self, item, default=None):
         # In this patch act as dict for backward compatibility
         try:
             return getattr(self, item)
