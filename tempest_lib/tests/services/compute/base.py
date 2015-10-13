@@ -20,19 +20,22 @@ from tempest_lib.tests import base
 
 
 class BaseComputeServiceTest(base.TestCase):
-    def create_response(self, body, to_utf=False, status=200):
+    def create_response(self, body, to_utf=False, status=200, headers=None):
         json_body = {}
         if body:
             json_body = json.dumps(body)
             if to_utf:
                 json_body = json_body.encode('utf-8')
-        response = (httplib2.Response({'status': status}), json_body)
+        resp_dict = {'status': status}
+        if headers:
+            resp_dict.update(headers)
+        response = (httplib2.Response(resp_dict), json_body)
         return response
 
     def check_service_client_function(self, function, function2mock,
                                       body, to_utf=False, status=200,
-                                      **kwargs):
-        mocked_response = self.create_response(body, to_utf, status)
+                                      headers=None, **kwargs):
+        mocked_response = self.create_response(body, to_utf, status, headers)
         self.useFixture(mockpatch.Patch(
             function2mock, return_value=mocked_response))
         if kwargs:

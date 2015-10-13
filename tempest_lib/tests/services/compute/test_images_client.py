@@ -85,6 +85,7 @@ class TestImagesClient(base.BaseComputeServiceTest):
             "progress": 100,
             "status": "ACTIVE",
             "updated": "2011-01-01T01:02:03Z"}},
+        "create": {},
         "delete": {}
         }
     func2mock = {
@@ -94,6 +95,7 @@ class TestImagesClient(base.BaseComputeServiceTest):
         'delete': 'tempest_lib.common.rest_client.RestClient.delete'}
     # Variable definition
     FAKE_IMAGE_ID = FAKE_IMAGE_DATA['show']['image']['id']
+    FAKE_SERVER_ID = "80a599e0-31e7-49b7-b260-868f441e343f"
     FAKE_CREATE_INFO = {'location': 'None'}
     FAKE_METADATA = FAKE_IMAGE_METADATA['show_item']['meta']
 
@@ -108,10 +110,27 @@ class TestImagesClient(base.BaseComputeServiceTest):
         mock_operation = self.func2mock['get']
         expected_op = self.FAKE_IMAGE_DATA[operation]
         params = {"image_id": self.FAKE_IMAGE_ID}
+        headers = None
         if operation == 'list':
             function = self.client.list_images
         elif operation == 'show':
             function = self.client.show_image
+        elif operation == 'create':
+            function = self.client.create_image
+            mock_operation = self.func2mock['post']
+            params = {"server_id": self.FAKE_SERVER_ID}
+            response_code = 202
+            headers = {
+                'connection': 'keep-alive',
+                'content-length': '0',
+                'content-type': 'application/json',
+                'status': '202',
+                'x-compute-request-id': 'req-fake',
+                'vary': 'accept-encoding',
+                'x-openstack-nova-api-version': 'v2.1',
+                'date': '13 Oct 2015 05:55:36 GMT',
+                'location': 'http://fake.com/images/fake'
+            }
         else:
             function = self.client.delete_image
             mock_operation = self.func2mock['delete']
@@ -119,7 +138,7 @@ class TestImagesClient(base.BaseComputeServiceTest):
 
         self.check_service_client_function(
             function, mock_operation, expected_op,
-            bytes_body, response_code, **params)
+            bytes_body, response_code, headers, **params)
 
     def _test_image_metadata(self, operation="set_item", bytes_body=False):
         response_code = 200
@@ -190,6 +209,12 @@ class TestImagesClient(base.BaseComputeServiceTest):
 
     def test_show_image_with_bytes_body(self):
         self._test_image_operation('show', True)
+
+    def test_create_image_with_str_body(self):
+        self._test_image_operation('create')
+
+    def test_create_image_with_bytes_body(self):
+        self._test_image_operation('create', True)
 
     def test_delete_image_with_str_body(self):
         self._test_image_operation('delete')
