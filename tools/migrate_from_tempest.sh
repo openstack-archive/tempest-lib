@@ -101,7 +101,8 @@ rm -rf $tmpdir
 
 # Generate a migration commit
 commit_message="Migrated $file_list from tempest"
-pre_list=$"This migrates the above files from tempest. This includes tempest commits:"
+pre_list=$"This migrates the above files from tempest.\nThis includes tempest commits:"
+pre_list=`echo -e $pre_list`
 post_list=$"to see the commit history for these files refer to the above Change-Ids \nin the tempest repository."
 post_list=`echo -e $post_list`
 if [ $service_client -eq 1 ]; then
