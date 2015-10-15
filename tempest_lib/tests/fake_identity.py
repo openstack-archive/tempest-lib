@@ -50,11 +50,11 @@ ALT_IDENTITY_V2_RESPONSE = {
             "expires": "2020-01-01T00:00:10Z",
             "id": ALT_TOKEN,
             "tenant": {
-                "id": "fake_tenant_id"
+                "id": "fake_alt_tenant_id"
             },
         },
         "user": {
-            "id": "fake_user_id",
+            "id": "fake_alt_user_id",
         },
         "serviceCatalog": CATALOG_V2,
     },

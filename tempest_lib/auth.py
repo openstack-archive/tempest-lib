@@ -148,9 +148,15 @@ class AuthProvider(object):
                     auth_data=self.alt_auth_data)
                 alt_auth_req = dict(url=alt_url, headers=alt_headers,
                                     body=alt_body)
+                if auth_req[self.alt_part] == alt_auth_req[self.alt_part]:
+                    raise exceptions.BadAltAuth(part=self.alt_part)
                 auth_req[self.alt_part] = alt_auth_req[self.alt_part]
 
             else:
+                # If the requested part is not affected by auth, we are
+                # not altering auth as expected, raise an exception
+                if auth_req[self.alt_part] == orig_req[self.alt_part]:
+                    raise exceptions.BadAltAuth(part=self.alt_part)
                 # If alt auth data is None, skip auth in the requested part
                 auth_req[self.alt_part] = orig_req[self.alt_part]
 

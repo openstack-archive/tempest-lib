@@ -124,6 +124,9 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
                        fake_identity._fake_v2_response)
         self.target_url = 'test_api'
 
+    def _get_fake_identity(self):
+        return fake_identity.IDENTITY_V2_RESPONSE['access']
+
     def _get_fake_alt_identity(self):
         return fake_identity.ALT_IDENTITY_V2_RESPONSE['access']
 
@@ -175,13 +178,44 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
         self._test_request_helper(filters, expected)
 
     def test_request_with_alt_auth_cleans_alt(self):
+        """Test alternate auth data for headers
+
+        Assert that when the alt data is provided for headers, after an
+        auth_request the data alt_data is cleaned-up.
+        """
         self.auth_provider.set_alt_auth_data(
-            'body',
+            'headers',
             (fake_identity.ALT_TOKEN, self._get_fake_alt_identity()))
-        self.test_request()
+        filters = {
+            'service': 'compute',
+            'endpoint_type': 'publicURL',
+            'region': 'fakeRegion'
+        }
+        self.auth_provider.auth_request('GET', self.target_url,
+                                        filters=filters)
+
         # Assert alt auth data is clear after it
         self.assertIsNone(self.auth_provider.alt_part)
         self.assertIsNone(self.auth_provider.alt_auth_data)
+
+    def test_request_with_identical_alt_auth(self):
+        """Test alternate but identical auth data for headers
+
+        Assert that when the alt data is provided, but it's actually
+        identical, an exception is raised.
+        """
+        self.auth_provider.set_alt_auth_data(
+            'headers',
+            (fake_identity.TOKEN, self._get_fake_identity()))
+        filters = {
+            'service': 'compute',
+            'endpoint_type': 'publicURL',
+            'region': 'fakeRegion'
+        }
+
+        self.assertRaises(exceptions.BadAltAuth,
+                          self.auth_provider.auth_request,
+                          'GET', self.target_url, filters=filters)
 
     def test_request_with_alt_part_without_alt_data(self):
         """Test empty alternate auth data
@@ -194,16 +228,33 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
             'endpoint_type': 'publicURL',
             'region': 'fakeRegion'
         }
-        self.auth_provider.set_alt_auth_data('url', None)
+        self.auth_provider.set_alt_auth_data('headers', None)
 
         url, headers, body = self.auth_provider.auth_request('GET',
                                                              self.target_url,
                                                              filters=filters)
-
-        self.assertEqual(url, self.target_url)
-        self.assertEqual(self._get_token_from_fake_identity(),
-                         headers['X-Auth-Token'])
+        # The original headers where empty
+        self.assertNotEqual(url, self.target_url)
+        self.assertIsNone(headers)
         self.assertEqual(body, None)
+
+    def test_request_with_alt_part_without_alt_data_no_change(self):
+        """Test empty alternate auth data with no effect
+
+        Assert that when alt_part is defined, no auth_data is provided,
+        and the the corresponding original request element was not going to
+        be changed anyways, and exception is raised
+        """
+        filters = {
+            'service': 'compute',
+            'endpoint_type': 'publicURL',
+            'region': 'fakeRegion'
+        }
+        self.auth_provider.set_alt_auth_data('body', None)
+
+        self.assertRaises(exceptions.BadAltAuth,
+                          self.auth_provider.auth_request,
+                          'GET', self.target_url, filters=filters)
 
     def test_request_with_bad_service(self):
         filters = {
@@ -343,6 +394,9 @@ class TestKeystoneV3AuthProvider(TestKeystoneV2AuthProvider):
         super(TestKeystoneV3AuthProvider, self).setUp()
         self.stubs.Set(v3_client.V3TokenClient, 'raw_request',
                        fake_identity._fake_v3_response)
+
+    def _get_fake_identity(self):
+        return fake_identity.IDENTITY_V3_RESPONSE['token']
 
     def _get_fake_alt_identity(self):
         return fake_identity.ALT_IDENTITY_V3['token']

@@ -149,6 +149,17 @@ class InvalidStructure(TempestException):
     message = "Invalid structure of table with details"
 
 
+class BadAltAuth(TempestException):
+    """Used when trying and failing to change to alt creds.
+
+    If alt creds end up the same as primary creds, use this
+    exception. This is often going to be the case when you assume
+    project_id is in the url, but it's not.
+
+    """
+    message = "The alt auth looks the same as primary auth for %(part)s"
+
+
 class CommandFailed(Exception):
     def __init__(self, returncode, cmd, output, stderr):
         super(CommandFailed, self).__init__()
