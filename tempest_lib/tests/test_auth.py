@@ -198,14 +198,14 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
         self.assertIsNone(self.auth_provider.alt_part)
         self.assertIsNone(self.auth_provider.alt_auth_data)
 
-    def test_request_with_identical_alt_auth(self):
+    def _test_request_with_identical_alt_auth(self, part):
         """Test alternate but identical auth data for headers
 
         Assert that when the alt data is provided, but it's actually
         identical, an exception is raised.
         """
         self.auth_provider.set_alt_auth_data(
-            'headers',
+            part,
             (fake_identity.TOKEN, self._get_fake_identity()))
         filters = {
             'service': 'compute',
@@ -216,6 +216,15 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
         self.assertRaises(exceptions.BadAltAuth,
                           self.auth_provider.auth_request,
                           'GET', self.target_url, filters=filters)
+
+    def test_request_with_identical_alt_auth_headers(self):
+        self._test_request_with_identical_alt_auth('headers')
+
+    def test_request_with_identical_alt_auth_url(self):
+        self._test_request_with_identical_alt_auth('url')
+
+    def test_request_with_identical_alt_auth_body(self):
+        self._test_request_with_identical_alt_auth('body')
 
     def test_request_with_alt_part_without_alt_data(self):
         """Test empty alternate auth data
@@ -238,7 +247,7 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
         self.assertIsNone(headers)
         self.assertEqual(body, None)
 
-    def test_request_with_alt_part_without_alt_data_no_change(self):
+    def _test_request_with_alt_part_without_alt_data_no_change(self, body):
         """Test empty alternate auth data with no effect
 
         Assert that when alt_part is defined, no auth_data is provided,
@@ -255,6 +264,15 @@ class TestKeystoneV2AuthProvider(BaseAuthTestsSetUp):
         self.assertRaises(exceptions.BadAltAuth,
                           self.auth_provider.auth_request,
                           'GET', self.target_url, filters=filters)
+
+    def test_request_with_alt_part_without_alt_data_no_change_headers(self):
+        self._test_request_with_alt_part_without_alt_data_no_change('headers')
+
+    def test_request_with_alt_part_without_alt_data_no_change_url(self):
+        self._test_request_with_alt_part_without_alt_data_no_change('url')
+
+    def test_request_with_alt_part_without_alt_data_no_change_body(self):
+        self._test_request_with_alt_part_without_alt_data_no_change('body')
 
     def test_request_with_bad_service(self):
         filters = {
