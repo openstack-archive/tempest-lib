@@ -71,10 +71,10 @@ class TestQuotasClient(base.BaseComputeServiceTest):
             tenant_id=self.project_id)
 
     def test_show_default_quota_set_with_str_body(self):
-        self._test_show_quota_set()
+        self._test_show_default_quota_set()
 
     def test_show_default_quota_set_with_bytes_body(self):
-        self._test_show_quota_set(bytes_body=True)
+        self._test_show_default_quota_set(bytes_body=True)
 
     def test_update_quota_set(self):
         fake_quota_set = copy.deepcopy(self.FAKE_QUOTA_SET)
