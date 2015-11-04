@@ -41,6 +41,7 @@ class TestQuotasClient(base.BaseComputeServiceTest):
         }
 
     project_id = "8421f7be61064f50b680465c07f334af"
+    fake_user_id = "65f09168cbb04eb593f3138b63b67b67"
 
     def setUp(self):
         super(TestQuotasClient, self).setUp()
@@ -48,19 +49,34 @@ class TestQuotasClient(base.BaseComputeServiceTest):
         self.client = quotas_client.QuotasClient(
             fake_auth, 'compute', 'regionOne')
 
-    def _test_show_quota_set(self, bytes_body=False):
-        self.check_service_client_function(
-            self.client.show_quota_set,
-            'tempest_lib.common.rest_client.RestClient.get',
-            self.FAKE_QUOTA_SET,
-            to_utf=bytes_body,
-            tenant_id=self.project_id)
+    def _test_show_quota_set(self, bytes_body=False, user_id=None):
+        if user_id:
+            self.check_service_client_function(
+                self.client.show_quota_set,
+                'tempest_lib.common.rest_client.RestClient.get',
+                self.FAKE_QUOTA_SET,
+                to_utf=bytes_body,
+                tenant_id=self.project_id,
+                user_id=user_id)
+        else:
+            self.check_service_client_function(
+                self.client.show_quota_set,
+                'tempest_lib.common.rest_client.RestClient.get',
+                self.FAKE_QUOTA_SET,
+                to_utf=bytes_body,
+                tenant_id=self.project_id)
 
     def test_show_quota_set_with_str_body(self):
         self._test_show_quota_set()
 
     def test_show_quota_set_with_bytes_body(self):
         self._test_show_quota_set(bytes_body=True)
+
+    def test_show_quota_set_for_user_with_str_body(self):
+        self._test_show_quota_set(user_id=self.fake_user_id)
+
+    def test_show_quota_set_for_user_with_bytes_body(self):
+        self._test_show_quota_set(bytes_body=True, user_id=self.fake_user_id)
 
     def _test_show_default_quota_set(self, bytes_body=False):
         self.check_service_client_function(
@@ -76,14 +92,36 @@ class TestQuotasClient(base.BaseComputeServiceTest):
     def test_show_default_quota_set_with_bytes_body(self):
         self._test_show_default_quota_set(bytes_body=True)
 
-    def test_update_quota_set(self):
+    def _test_update_quota_set(self, bytes_body=False, user_id=None):
         fake_quota_set = copy.deepcopy(self.FAKE_QUOTA_SET)
         fake_quota_set['quota_set'].pop("id")
-        self.check_service_client_function(
-            self.client.update_quota_set,
-            'tempest_lib.common.rest_client.RestClient.put',
-            fake_quota_set,
-            tenant_id=self.project_id)
+        if user_id:
+            self.check_service_client_function(
+                self.client.update_quota_set,
+                'tempest_lib.common.rest_client.RestClient.put',
+                fake_quota_set,
+                to_utf=bytes_body,
+                tenant_id=self.project_id,
+                user_id=user_id)
+        else:
+            self.check_service_client_function(
+                self.client.update_quota_set,
+                'tempest_lib.common.rest_client.RestClient.put',
+                fake_quota_set,
+                to_utf=bytes_body,
+                tenant_id=self.project_id)
+
+    def test_update_quota_set_with_str_body(self):
+        self._test_update_quota_set()
+
+    def test_update_quota_set_with_bytes_body(self):
+        self._test_update_quota_set(bytes_body=True)
+
+    def test_update_quota_set_for_user_with_str_body(self):
+        self._test_update_quota_set(user_id=self.fake_user_id)
+
+    def test_update_quota_set_for_user_with_bytes_body(self):
+        self._test_update_quota_set(bytes_body=True, user_id=self.fake_user_id)
 
     def test_delete_quota_set(self):
         self.check_service_client_function(
