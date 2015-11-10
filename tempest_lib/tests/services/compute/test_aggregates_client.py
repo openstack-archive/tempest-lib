@@ -62,6 +62,26 @@ class TestAggregatesClient(base.BaseComputeServiceTest):
         }
     }
 
+    FAKE_AGGREGATE = {
+        "availability_zone": "nova",
+        "created_at": "2013-08-18T12:17:56.297823",
+        "deleted": False,
+        "deleted_at": None,
+        "hosts": [
+            "21549b2f665945baaa7101926a00143c"
+        ],
+        "id": 1,
+        "metadata": {
+            "availability_zone": "nova"
+        },
+        "name": u'\xe9',
+        "updated_at": None
+    }
+
+    FAKE_ADD_HOST = {'aggregate': FAKE_AGGREGATE}
+    FAKE_REMOVE_HOST = {'aggregate': FAKE_AGGREGATE}
+    FAKE_SET_METADATA = {'aggregate': FAKE_AGGREGATE}
+
     def setUp(self):
         super(TestAggregatesClient, self).setUp()
         fake_auth = fake_auth_provider.FakeAuthProvider()
@@ -128,3 +148,45 @@ class TestAggregatesClient(base.BaseComputeServiceTest):
 
     def test_update_aggregate_with_bytes_body(self):
         self._test_update_aggregate(bytes_body=True)
+
+    def _test_add_host(self, bytes_body=False):
+        self.check_service_client_function(
+            self.client.add_host,
+            'tempest_lib.common.rest_client.RestClient.post',
+            self.FAKE_ADD_HOST,
+            bytes_body,
+            aggregate_id=1)
+
+    def test_add_host_with_str_body(self):
+        self._test_add_host()
+
+    def test_add_host_with_bytes_body(self):
+        self._test_add_host(bytes_body=True)
+
+    def _test_remove_host(self, bytes_body=False):
+        self.check_service_client_function(
+            self.client.remove_host,
+            'tempest_lib.common.rest_client.RestClient.post',
+            self.FAKE_REMOVE_HOST,
+            bytes_body,
+            aggregate_id=1)
+
+    def test_remove_host_with_str_body(self):
+        self._test_remove_host()
+
+    def test_remove_host_with_bytes_body(self):
+        self._test_remove_host(bytes_body=True)
+
+    def _test_set_metadata(self, bytes_body=False):
+        self.check_service_client_function(
+            self.client.set_metadata,
+            'tempest_lib.common.rest_client.RestClient.post',
+            self.FAKE_SET_METADATA,
+            bytes_body,
+            aggregate_id=1)
+
+    def test_set_metadata_with_str_body(self):
+        self._test_set_metadata()
+
+    def test_set_metadata_with_bytes_body(self):
+        self._test_set_metadata(bytes_body=True)
