@@ -592,6 +592,7 @@ class RestClient(object):
         :raises Forbidden: If a 403 response code is received
         :raises NotFound: If a 404 response code is received
         :raises BadRequest: If a 400 response code is received
+        :raises Gone: If a 410 response code is received
         :raises Conflict: If a 409 response code is received
         :raises OverLimit: If a 413 response code is received and over_limit is
                           not in the response body
@@ -695,6 +696,11 @@ class RestClient(object):
             if parse_resp:
                 resp_body = self._parse_resp(resp_body)
             raise exceptions.BadRequest(resp_body, resp=resp)
+
+        if resp.status == 410:
+            if parse_resp:
+                resp_body = self._parse_resp(resp_body)
+            raise exceptions.Gone(resp_body, resp=resp)
 
         if resp.status == 409:
             if parse_resp:

@@ -330,6 +330,9 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
     def test_response_409(self):
         self._test_error_checker(exceptions.Conflict, self.set_data("409"))
 
+    def test_response_410(self):
+        self._test_error_checker(exceptions.Gone, self.set_data("410"))
+
     def test_response_413(self):
         self._test_error_checker(exceptions.OverLimit, self.set_data("413"))
 
@@ -401,6 +404,25 @@ class TestRestClientErrorCheckerJSON(base.TestCase):
         r_body = '{"foo": "bar"]'
         e = self._test_error_checker(exceptions.NotFound,
                                      self.set_data("404", r_body=r_body))
+
+        expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_410_with_dict(self):
+        r_body = '{"resp_body": {"err": "fake_resp_body"}}'
+        e = self._test_error_checker(exceptions.Gone,
+                                     self.set_data("410", r_body=r_body))
+
+        if self.c_type == 'application/json':
+            expected = {"err": "fake_resp_body"}
+        else:
+            expected = r_body
+        self.assertEqual(expected, e.resp_body)
+
+    def test_response_410_with_invalid_dict(self):
+        r_body = '{"foo": "bar"]'
+        e = self._test_error_checker(exceptions.Gone,
+                                     self.set_data("410", r_body=r_body))
 
         expected = r_body
         self.assertEqual(expected, e.resp_body)
