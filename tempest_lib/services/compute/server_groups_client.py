@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from oslo_log import log as logging
 from oslo_serialization import jsonutils as json
 
 from tempest_lib.api_schema.response.compute.v2_1 import servers as schema
@@ -21,6 +22,7 @@ from tempest_lib.common import rest_client
 
 
 class ServerGroupsClient(rest_client.RestClient):
+    LOG = logging.getLogger(__name__)
 
     def create_server_group(self, **kwargs):
         """Create the server group
@@ -33,7 +35,7 @@ class ServerGroupsClient(rest_client.RestClient):
         resp, body = self.post('os-server-groups', post_body)
 
         body = json.loads(body)
-        self.validate_response(schema.create_get_server_group, resp, body)
+        self.validate_response(schema.create_show_server_group, resp, body)
         return rest_client.ResponseBody(resp, body)
 
     def delete_server_group(self, server_group_id):
@@ -49,9 +51,14 @@ class ServerGroupsClient(rest_client.RestClient):
         self.validate_response(schema.list_server_groups, resp, body)
         return rest_client.ResponseBody(resp, body)
 
-    def get_server_group(self, server_group_id):
+    def show_server_group(self, server_group_id):
         """Get the details of given server_group."""
         resp, body = self.get("os-server-groups/%s" % server_group_id)
         body = json.loads(body)
-        self.validate_response(schema.create_get_server_group, resp, body)
+        self.validate_response(schema.create_show_server_group, resp, body)
         return rest_client.ResponseBody(resp, body)
+
+    def get_server_group(self, server_group_id):
+        self.LOG.warning("%s method was deprecated and renamed to %s" %
+                         ("get_server_group", "show_server_group"))
+        return self.show_server_group(server_group_id)
