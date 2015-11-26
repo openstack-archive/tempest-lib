@@ -115,6 +115,10 @@ class Conflict(ClientRestClientException):
     message = "An object with that identifier already exists"
 
 
+class Gone(ClientRestClientException):
+    message = "The requested resource is no longer available"
+
+
 class ResponseWithNonEmptyBody(OtherRestClientException):
     message = ("RFC Violation! Response with %(status)d HTTP Status Code "
                "MUST NOT have a body")
