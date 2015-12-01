@@ -86,10 +86,12 @@ class CLIClient(object):
     :param cli_dir: The path where the python client binaries are installed.
                     defaults to /usr/bin
     :type cli_dir: string
+    :param insecure: if True, --insecure is passed to python client binaries.
+    :type insecure: boolean
     """
 
     def __init__(self, username='', password='', tenant_name='', uri='',
-                 cli_dir='', *args, **kwargs):
+                 cli_dir='', insecure=False, *args, **kwargs):
         """Initialize a new CLIClient object."""
         super(CLIClient, self).__init__()
         self.cli_dir = cli_dir if cli_dir else '/usr/bin'
@@ -97,6 +99,7 @@ class CLIClient(object):
         self.tenant_name = tenant_name
         self.password = password
         self.uri = uri
+        self.insecure = insecure
 
     def nova(self, action, flags='', params='', fail_ok=False,
              endpoint_type='publicURL', merge_stderr=False):
@@ -357,7 +360,10 @@ class CLIClient(object):
                   self.tenant_name,
                   self.password,
                   self.uri))
-        flags = creds + ' ' + flags
+        if self.insecure:
+            flags = creds + ' --insecure ' + flags
+        else:
+            flags = creds + ' ' + flags
         return execute(cmd, action, flags, params, fail_ok, merge_stderr,
                        self.cli_dir)
 
