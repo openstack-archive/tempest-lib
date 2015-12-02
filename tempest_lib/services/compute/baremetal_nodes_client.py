@@ -34,7 +34,7 @@ class BaremetalNodesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def show_baremetal_node(self, baremetal_node_id):
-        """Returns the details of a single baremetal node."""
+        """Return the details of a single baremetal node."""
         url = 'os-baremetal-nodes/%s' % baremetal_node_id
         resp, body = self.get(url)
         body = json.loads(body)

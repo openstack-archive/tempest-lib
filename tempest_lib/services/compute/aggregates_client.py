@@ -37,7 +37,11 @@ class AggregatesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_aggregate(self, **kwargs):
-        """Creates a new aggregate."""
+        """Create a new aggregate.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createaggregate
+        """
         post_body = json.dumps({'aggregate': kwargs})
         resp, body = self.post('os-aggregates', post_body)
 
@@ -46,7 +50,11 @@ class AggregatesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def update_aggregate(self, aggregate_id, **kwargs):
-        """Update a aggregate."""
+        """Update an aggregate.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updateaggregate
+        """
         put_body = json.dumps({'aggregate': kwargs})
         resp, body = self.put('os-aggregates/%s' % aggregate_id, put_body)
 
@@ -55,7 +63,7 @@ class AggregatesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def delete_aggregate(self, aggregate_id):
-        """Deletes the given aggregate."""
+        """Delete the given aggregate."""
         resp, body = self.delete("os-aggregates/%s" % aggregate_id)
         self.validate_response(schema.delete_aggregate, resp, body)
         return rest_client.ResponseBody(resp, body)
@@ -69,11 +77,15 @@ class AggregatesClient(rest_client.RestClient):
 
     @property
     def resource_type(self):
-        """Returns the primary type of resource this client works with."""
+        """Return the primary type of resource this client works with."""
         return 'aggregate'
 
     def add_host(self, aggregate_id, **kwargs):
-        """Adds a host to the given aggregate."""
+        """Add a host to the given aggregate.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#addhost
+        """
         post_body = json.dumps({'add_host': kwargs})
         resp, body = self.post('os-aggregates/%s/action' % aggregate_id,
                                post_body)
@@ -82,7 +94,15 @@ class AggregatesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def remove_host(self, aggregate_id, **kwargs):
-        """Removes a host from the given aggregate."""
+        """Remove a host from the given aggregate.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#removeaggregate
+        """
+        # TODO(oomichi): We can see the API doc of the above method with
+        # the above link, but the link is wrong because the link is not for
+        # host api. That is api-site problem. After fixing api-site, we will
+        # fix the above link also.
         post_body = json.dumps({'remove_host': kwargs})
         resp, body = self.post('os-aggregates/%s/action' % aggregate_id,
                                post_body)
@@ -91,7 +111,7 @@ class AggregatesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def set_metadata(self, aggregate_id, **kwargs):
-        """Replaces the aggregate's existing metadata with new metadata."""
+        """Replace the aggregate's existing metadata with new metadata."""
         post_body = json.dumps({'set_metadata': kwargs})
         resp, body = self.post('os-aggregates/%s/action' % aggregate_id,
                                post_body)

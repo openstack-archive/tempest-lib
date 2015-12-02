@@ -29,7 +29,11 @@ class FixedIPsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def reserve_fixed_ip(self, fixed_ip, **kwargs):
-        """This reserves and unreserves fixed ips."""
+        """Reserve/Unreserve a fixed IP.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#reserveIP
+        """
         url = "os-fixed-ips/%s/action" % fixed_ip
         resp, body = self.post(url, json.dumps(kwargs))
         self.validate_response(schema.reserve_unreserve_fixed_ip, resp, body)

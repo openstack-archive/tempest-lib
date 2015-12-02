@@ -48,12 +48,10 @@ class FlavorsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_flavor(self, **kwargs):
-        """Creates a new flavor or instance type.
+        """Create a new flavor or instance type.
 
-        Most parameters except the following are passed to the API without
-        any changes.
-        :param ephemeral: The name is changed to OS-FLV-EXT-DATA:ephemeral
-        :param is_public: The name is changed to os-flavor-access:is_public
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#create-flavors
         """
         if kwargs.get('ephemeral'):
             kwargs['OS-FLV-EXT-DATA:ephemeral'] = kwargs.pop('ephemeral')
@@ -68,7 +66,7 @@ class FlavorsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def delete_flavor(self, flavor_id):
-        """Deletes the given flavor."""
+        """Delete the given flavor."""
         resp, body = self.delete("flavors/{0}".format(flavor_id))
         self.validate_response(schema.delete_flavor, resp, body)
         return rest_client.ResponseBody(resp, body)
@@ -85,11 +83,19 @@ class FlavorsClient(rest_client.RestClient):
 
     @property
     def resource_type(self):
-        """Returns the primary type of resource this client works with."""
+        """Return the primary type of resource this client works with."""
         return 'flavor'
 
     def set_flavor_extra_spec(self, flavor_id, **kwargs):
-        """Sets extra Specs to the mentioned flavor."""
+        """Set extra Specs to the mentioned flavor.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updateflavor
+        """
+        # TODO(oomichi): We can see the API doc of the above method with
+        # the above link, but the link is wrong because the link is not for
+        # flavor-extraspac api. That is api-site problem.
+        # After fixing api-site, we will fix the above link also.
         post_body = json.dumps({'extra_specs': kwargs})
         resp, body = self.post('flavors/%s/os-extra_specs' % flavor_id,
                                post_body)
@@ -99,7 +105,7 @@ class FlavorsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def list_flavor_extra_specs(self, flavor_id):
-        """Gets extra Specs details of the mentioned flavor."""
+        """Get extra Specs details of the mentioned flavor."""
         resp, body = self.get('flavors/%s/os-extra_specs' % flavor_id)
         body = json.loads(body)
         self.validate_response(schema_extra_specs.set_get_flavor_extra_specs,
@@ -107,7 +113,7 @@ class FlavorsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def show_flavor_extra_spec(self, flavor_id, key):
-        """Gets extra Specs key-value of the mentioned flavor and key."""
+        """Get extra Specs key-value of the mentioned flavor and key."""
         resp, body = self.get('flavors/%s/os-extra_specs/%s' % (flavor_id,
                               key))
         body = json.loads(body)
@@ -117,7 +123,11 @@ class FlavorsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def update_flavor_extra_spec(self, flavor_id, key, **kwargs):
-        """Update specified extra Specs of the mentioned flavor and key."""
+        """Update specified extra Specs of the mentioned flavor and key.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updateflavorspec
+        """
         resp, body = self.put('flavors/%s/os-extra_specs/%s' %
                               (flavor_id, key), json.dumps(kwargs))
         body = json.loads(body)
@@ -127,14 +137,14 @@ class FlavorsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def unset_flavor_extra_spec(self, flavor_id, key):
-        """Unsets extra Specs from the mentioned flavor."""
+        """Unset extra Specs from the mentioned flavor."""
         resp, body = self.delete('flavors/%s/os-extra_specs/%s' %
                                  (flavor_id, key))
         self.validate_response(schema.unset_flavor_extra_specs, resp, body)
         return rest_client.ResponseBody(resp, body)
 
     def list_flavor_access(self, flavor_id):
-        """Gets flavor access information given the flavor id."""
+        """Get flavor access information given the flavor id."""
         resp, body = self.get('flavors/%s/os-flavor-access' % flavor_id)
         body = json.loads(body)
         self.validate_response(schema_access.add_remove_list_flavor_access,

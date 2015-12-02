@@ -29,7 +29,7 @@ class CertificatesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_certificate(self):
-        """create certificates."""
+        """Create a certificate."""
         url = "os-certificates"
         resp, body = self.post(url, None)
         body = json.loads(body)

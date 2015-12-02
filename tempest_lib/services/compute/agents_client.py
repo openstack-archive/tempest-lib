@@ -33,7 +33,11 @@ class AgentsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_agent(self, **kwargs):
-        """Create an agent build."""
+        """Create an agent build.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#agentbuild
+        """
         post_body = json.dumps({'agent': kwargs})
         resp, body = self.post('os-agents', post_body)
         body = json.loads(body)
@@ -47,7 +51,11 @@ class AgentsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def update_agent(self, agent_id, **kwargs):
-        """Update an agent build."""
+        """Update an agent build.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updatebuild
+        """
         put_body = json.dumps({'para': kwargs})
         resp, body = self.put('os-agents/%s' % agent_id, put_body)
         body = json.loads(body)
