@@ -28,6 +28,11 @@ class InterfacesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_interface(self, server_id, **kwargs):
+        """Create an interface.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createAttachInterface
+        """
         post_body = {'interfaceAttachment': kwargs}
         post_body = json.dumps(post_body)
         resp, body = self.post('servers/%s/os-interface' % server_id,

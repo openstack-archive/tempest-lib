@@ -34,6 +34,11 @@ class KeyPairsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_keypair(self, **kwargs):
+        """Create a keypair.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createKeypair
+        """
         post_body = json.dumps({'keypair': kwargs})
         resp, body = self.post("os-keypairs", body=post_body)
         body = json.loads(body)

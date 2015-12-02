@@ -32,8 +32,11 @@ class QuotaClassesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def update_quota_class_set(self, quota_class_id, **kwargs):
-        """Updates the quota class's limits for one or more resources."""
+        """Update the quota class's limits for one or more resources.
 
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updatequota
+        """
         post_body = json.dumps({'quota_class_set': kwargs})
 
         resp, body = self.put('os-quota-class-sets/%s' % quota_class_id,

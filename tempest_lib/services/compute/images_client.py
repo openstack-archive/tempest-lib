@@ -24,7 +24,11 @@ from tempest_lib import exceptions as lib_exc
 class ImagesClient(rest_client.RestClient):
 
     def create_image(self, server_id, **kwargs):
-        """Creates an image of the original server."""
+        """Create an image of the original server.
+
+        Available params: see http://developer.openstack.org/
+                          api-ref-compute-v2.1.html#createImage
+        """
 
         post_body = {'createImage': kwargs}
         post_body = json.dumps(post_body)
@@ -34,7 +38,11 @@ class ImagesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def list_images(self, detail=False, **params):
-        """Returns a list of all images filtered by any parameters."""
+        """Return a list of all images filtered by any parameter.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#listImages
+        """
         url = 'images'
         _schema = schema.list_images
         if detail:
@@ -50,7 +58,7 @@ class ImagesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def show_image(self, image_id):
-        """Returns the details of a single image."""
+        """Return the details of a single image."""
         resp, body = self.get("images/%s" % image_id)
         self.expected_success(200, resp.status)
         body = json.loads(body)
@@ -58,20 +66,24 @@ class ImagesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def delete_image(self, image_id):
-        """Deletes the provided image."""
+        """Delete the provided image."""
         resp, body = self.delete("images/%s" % image_id)
         self.validate_response(schema.delete, resp, body)
         return rest_client.ResponseBody(resp, body)
 
     def list_image_metadata(self, image_id):
-        """Lists all metadata items for an image."""
+        """List all metadata items for an image."""
         resp, body = self.get("images/%s/metadata" % image_id)
         body = json.loads(body)
         self.validate_response(schema.image_metadata, resp, body)
         return rest_client.ResponseBody(resp, body)
 
     def set_image_metadata(self, image_id, meta):
-        """Sets the metadata for an image."""
+        """Set the metadata for an image.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createImageMetadata
+        """
         post_body = json.dumps({'metadata': meta})
         resp, body = self.put('images/%s/metadata' % image_id, post_body)
         body = json.loads(body)
@@ -79,7 +91,11 @@ class ImagesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def update_image_metadata(self, image_id, meta):
-        """Updates the metadata for an image."""
+        """Update the metadata for an image.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updateImageMetadata
+        """
         post_body = json.dumps({'metadata': meta})
         resp, body = self.post('images/%s/metadata' % image_id, post_body)
         body = json.loads(body)
@@ -87,14 +103,18 @@ class ImagesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def show_image_metadata_item(self, image_id, key):
-        """Returns the value for a specific image metadata key."""
+        """Return the value for a specific image metadata key."""
         resp, body = self.get("images/%s/metadata/%s" % (image_id, key))
         body = json.loads(body)
         self.validate_response(schema.image_meta_item, resp, body)
         return rest_client.ResponseBody(resp, body)
 
     def set_image_metadata_item(self, image_id, key, meta):
-        """Sets the value for a specific image metadata key."""
+        """Set the value for a specific image metadata key.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#setImageMetadataItem
+        """
         post_body = json.dumps({'meta': meta})
         resp, body = self.put('images/%s/metadata/%s' % (image_id, key),
                               post_body)
@@ -103,7 +123,7 @@ class ImagesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def delete_image_metadata_item(self, image_id, key):
-        """Deletes a single image metadata key/value pair."""
+        """Delete a single image metadata key/value pair."""
         resp, body = self.delete("images/%s/metadata/%s" %
                                  (image_id, key))
         self.validate_response(schema.delete, resp, body)
@@ -118,5 +138,5 @@ class ImagesClient(rest_client.RestClient):
 
     @property
     def resource_type(self):
-        """Returns the primary type of resource this client works with."""
+        """Return the primary type of resource this client works with."""
         return 'image'

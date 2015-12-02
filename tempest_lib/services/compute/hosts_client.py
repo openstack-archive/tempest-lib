@@ -22,7 +22,7 @@ from tempest_lib.common import rest_client
 class HostsClient(rest_client.RestClient):
 
     def list_hosts(self, **params):
-        """Lists all hosts."""
+        """List all hosts."""
 
         url = 'os-hosts'
         if params:
@@ -42,7 +42,11 @@ class HostsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def update_host(self, hostname, **kwargs):
-        """Update a host."""
+        """Update a host.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#enablehost
+        """
 
         request_body = {
             'status': None,
@@ -73,7 +77,7 @@ class HostsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def reboot_host(self, hostname):
-        """reboot a host."""
+        """Reboot a host."""
 
         resp, body = self.get("os-hosts/%s/reboot" % hostname)
         body = json.loads(body)

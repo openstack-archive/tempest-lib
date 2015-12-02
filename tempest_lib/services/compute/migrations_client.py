@@ -22,7 +22,11 @@ from tempest_lib.common import rest_client
 class MigrationsClient(rest_client.RestClient):
 
     def list_migrations(self, **params):
-        """Lists all migrations."""
+        """List all migrations.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#returnmigrations
+        """
 
         url = 'os-migrations'
         if params:
