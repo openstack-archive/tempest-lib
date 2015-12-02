@@ -24,6 +24,11 @@ from tempest_lib import exceptions as lib_exc
 class SnapshotsClient(rest_client.RestClient):
 
     def create_snapshot(self, volume_id, **kwargs):
+        """Create a snapshot.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createSnapshot
+        """
         post_body = {
             'volume_id': volume_id
         }
@@ -67,5 +72,5 @@ class SnapshotsClient(rest_client.RestClient):
 
     @property
     def resource_type(self):
-        """Returns the primary type of resource this client works with."""
+        """Return the primary type of resource this client works with."""
         return 'snapshot'

@@ -45,11 +45,10 @@ class SecurityGroupsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_security_group(self, **kwargs):
-        """Creates a new security group.
+        """Create a new security group.
 
-        name (Required): Name of security group.
-        description (Required): Description of security group.
-
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createSecGroup
         """
         post_body = json.dumps({'security_group': kwargs})
         resp, body = self.post('os-security-groups', post_body)
@@ -60,10 +59,8 @@ class SecurityGroupsClient(rest_client.RestClient):
     def update_security_group(self, security_group_id, **kwargs):
         """Update a security group.
 
-        security_group_id: a security_group to update
-        name: new name of security group
-        description: new description of security group
-
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#updateSecGroup
         """
         post_body = json.dumps({'security_group': kwargs})
         resp, body = self.put('os-security-groups/%s' % security_group_id,
@@ -73,7 +70,7 @@ class SecurityGroupsClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def delete_security_group(self, security_group_id):
-        """Deletes the provided Security Group."""
+        """Delete the provided Security Group."""
         resp, body = self.delete(
             'os-security-groups/%s' % security_group_id)
         self.validate_response(schema.delete_security_group, resp, body)
@@ -88,5 +85,5 @@ class SecurityGroupsClient(rest_client.RestClient):
 
     @property
     def resource_type(self):
-        """Returns the primary type of resource this client works with."""
+        """Return the primary type of resource this client works with."""
         return 'security_group'

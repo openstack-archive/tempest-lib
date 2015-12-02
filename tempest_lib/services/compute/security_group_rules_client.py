@@ -23,15 +23,10 @@ from tempest_lib.common import rest_client
 class SecurityGroupRulesClient(rest_client.RestClient):
 
     def create_security_group_rule(self, **kwargs):
-        """Creating a new security group rules.
+        """Create a new security group rule.
 
-        parent_group_id :ID of Security group.
-        ip_protocol : ip_proto (icmp, tcp, udp).
-        from_port: Port at start of range.
-        to_port  : Port at end of range.
-        Following optional keyword arguments are accepted:
-        cidr     : CIDR for address range.
-        group_id : ID of the Source group.
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createSecGroupRule
         """
         post_body = json.dumps({'security_group_rule': kwargs})
         url = 'os-security-group-rules'

@@ -34,10 +34,10 @@ class ServicesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def enable_service(self, **kwargs):
-        """Enable service on a host
+        """Enable service on a host.
 
-        host_name: Name of host
-        binary: Service binary
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#enableScheduling
         """
         post_body = json.dumps(kwargs)
         resp, body = self.put('os-services/enable', post_body)
@@ -46,10 +46,10 @@ class ServicesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def disable_service(self, **kwargs):
-        """Disable service on a host
+        """Disable service on a host.
 
-        host_name: Name of host
-        binary: Service binary
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#disableScheduling
         """
         post_body = json.dumps(kwargs)
         resp, body = self.put('os-services/disable', post_body)

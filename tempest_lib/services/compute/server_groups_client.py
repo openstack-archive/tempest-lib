@@ -25,11 +25,10 @@ class ServerGroupsClient(rest_client.RestClient):
     LOG = logging.getLogger(__name__)
 
     def create_server_group(self, **kwargs):
-        """Create the server group
+        """Create the server group.
 
-        name : Name of the server-group
-        policies : List of the policies - affinity/anti-affinity)
-
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createServerGroup
         """
         post_body = json.dumps({'server_group': kwargs})
         resp, body = self.post('os-server-groups', post_body)

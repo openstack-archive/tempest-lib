@@ -23,13 +23,16 @@ from tempest_lib.common import rest_client
 class SecurityGroupDefaultRulesClient(rest_client.RestClient):
 
     def create_security_default_group_rule(self, **kwargs):
-        """Creating security group default rules.
+        """Create security group default rule.
 
-        ip_protocol : ip_protocol (icmp, tcp, udp).
-        from_port: Port at start of range.
-        to_port  : Port at end of range.
-        cidr     : CIDR for address range.
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createSecGroupRule
         """
+        # TODO(oomichi): We can see the API doc of the above method with
+        # the above link, but the link is wrong because the link doesn't
+        # contain "Default" and the link is duplicated to non default sg.
+        # After fixing api-site, we will fix the above link also.
+        # LP: https://bugs.launchpad.net/openstack-api-site/+bug/1521826
         post_body = json.dumps({'security_group_default_rule': kwargs})
         url = 'os-security-group-default-rules'
         resp, body = self.post(url, post_body)
@@ -40,7 +43,7 @@ class SecurityGroupDefaultRulesClient(rest_client.RestClient):
 
     def delete_security_group_default_rule(self,
                                            security_group_default_rule_id):
-        """Deletes the provided Security Group default rule."""
+        """Delete the provided Security Group default rule."""
         resp, body = self.delete('os-security-group-default-rules/%s' % (
             security_group_default_rule_id))
         self.validate_response(schema.delete_security_group_default_rule,

@@ -38,7 +38,7 @@ class VolumesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def show_volume(self, volume_id):
-        """Returns the details of a single volume."""
+        """Return the details of a single volume."""
         url = "os-volumes/%s" % volume_id
         resp, body = self.get(url)
         body = json.loads(body)
@@ -46,12 +46,10 @@ class VolumesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def create_volume(self, **kwargs):
-        """Creates a new Volume.
+        """Create a new Volume.
 
-        size(Required): Size of volume in GB.
-        Following optional keyword arguments are accepted:
-        display_name: Optional Volume Name.
-        metadata: A dictionary of values to be used as metadata.
+        Available params: see http://developer.openstack.org/
+                              api-ref-compute-v2.1.html#createVolume
         """
         post_body = json.dumps({'volume': kwargs})
         resp, body = self.post('os-volumes', post_body)
@@ -60,7 +58,7 @@ class VolumesClient(rest_client.RestClient):
         return rest_client.ResponseBody(resp, body)
 
     def delete_volume(self, volume_id):
-        """Deletes the Specified Volume."""
+        """Delete the Specified Volume."""
         resp, body = self.delete("os-volumes/%s" % volume_id)
         self.validate_response(schema.delete_volume, resp, body)
         return rest_client.ResponseBody(resp, body)
@@ -74,5 +72,5 @@ class VolumesClient(rest_client.RestClient):
 
     @property
     def resource_type(self):
-        """Returns the primary type of resource this client works with."""
+        """Return the primary type of resource this client works with."""
         return 'volume'
