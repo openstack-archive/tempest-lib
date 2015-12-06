@@ -26,13 +26,9 @@ class SecurityGroupDefaultRulesClient(rest_client.RestClient):
         """Create security group default rule.
 
         Available params: see http://developer.openstack.org/
-                              api-ref-compute-v2.1.html#createSecGroupRule
+                              api-ref-compute-v2.1.html
+                              #createSecGroupDefaultRule
         """
-        # TODO(oomichi): We can see the API doc of the above method with
-        # the above link, but the link is wrong because the link doesn't
-        # contain "Default" and the link is duplicated to non default sg.
-        # After fixing api-site, we will fix the above link also.
-        # LP: https://bugs.launchpad.net/openstack-api-site/+bug/1521826
         post_body = json.dumps({'security_group_default_rule': kwargs})
         url = 'os-security-group-default-rules'
         resp, body = self.post(url, post_body)

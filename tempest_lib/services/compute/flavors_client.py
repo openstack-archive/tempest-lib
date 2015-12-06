@@ -90,12 +90,8 @@ class FlavorsClient(rest_client.RestClient):
         """Set extra Specs to the mentioned flavor.
 
         Available params: see http://developer.openstack.org/
-                              api-ref-compute-v2.1.html#updateflavor
+                              api-ref-compute-v2.1.html#updateFlavorExtraSpec
         """
-        # TODO(oomichi): We can see the API doc of the above method with
-        # the above link, but the link is wrong because the link is not for
-        # flavor-extraspac api. That is api-site problem.
-        # After fixing api-site, we will fix the above link also.
         post_body = json.dumps({'extra_specs': kwargs})
         resp, body = self.post('flavors/%s/os-extra_specs' % flavor_id,
                                post_body)

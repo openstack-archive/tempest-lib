@@ -97,12 +97,8 @@ class AggregatesClient(rest_client.RestClient):
         """Remove a host from the given aggregate.
 
         Available params: see http://developer.openstack.org/
-                              api-ref-compute-v2.1.html#removeaggregate
+                              api-ref-compute-v2.1.html#removehost
         """
-        # TODO(oomichi): We can see the API doc of the above method with
-        # the above link, but the link is wrong because the link is not for
-        # host api. That is api-site problem. After fixing api-site, we will
-        # fix the above link also.
         post_body = json.dumps({'remove_host': kwargs})
         resp, body = self.post('os-aggregates/%s/action' % aggregate_id,
                                post_body)
