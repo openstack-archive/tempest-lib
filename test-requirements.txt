@@ -14,4 +14,4 @@ testrepository>=0.0.18
 testscenarios>=0.4
 testtools>=1.4.0
 mock>=1.2
-ddt>=0.7.0
+ddt>=1.0.1
