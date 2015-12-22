@@ -461,7 +461,9 @@ class RestClient(object):
         #  }
         try:
             # Ensure there are not more than one top-level keys
-            if len(body.keys()) > 1:
+            # NOTE(freerunner): Ensure, that JSON is not nullable to
+            # to prevent StopIteration Exception
+            if len(body.keys()) != 1:
                 return body
             # Just return the "wrapped" element
             first_key, first_item = six.next(six.iteritems(body))
