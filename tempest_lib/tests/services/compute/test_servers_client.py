@@ -564,6 +564,17 @@ class TestServersClient(base.BaseComputeServiceTest):
             server_id=self.server_id
             )
 
+    def test_update_attached_volume(self):
+        self.check_service_client_function(
+            self.client.update_attached_volume,
+            'tempest_lib.common.rest_client.RestClient.put',
+            {},
+            status=202,
+            server_id=self.server_id,
+            attachment_id='fake-attachment-id',
+            volumeId='fake-volume-id'
+            )
+
     def test_detach_volume_with_str_body(self):
         self._test_detach_volume_server()
 

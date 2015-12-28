@@ -547,3 +547,7 @@ server_actions_delete_password = {
 
 server_actions_confirm_resize = copy.deepcopy(
     server_actions_delete_password)
+
+update_attached_volume = {
+    'status_code': [202]
+}
