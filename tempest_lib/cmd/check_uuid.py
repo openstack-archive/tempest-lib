@@ -21,8 +21,9 @@ import inspect
 import os
 import sys
 import unittest
-import urllib
 import uuid
+
+import six.moves.urllib.parse as urlparse
 
 DECORATOR_MODULE = 'test'
 DECORATOR_NAME = 'idempotent_id'
@@ -49,11 +50,11 @@ class SourcePatcher(object):
 
     @staticmethod
     def _quote(s):
-        return urllib.quote(s)
+        return urlparse.quote(s)
 
     @staticmethod
     def _unquote(s):
-        return urllib.unquote(s)
+        return urlparse.unquote(s)
 
     def add_patch(self, filename, patch, line_no):
         """Add lazy patch"""
