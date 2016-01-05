@@ -112,9 +112,9 @@ def tables(output_lines):
             if label is None:
                 label = line
             else:
-                LOG.warn('Invalid line between tables: %s' % line)
+                LOG.warning('Invalid line between tables: %s' % line)
     if len(table_) > 0:
-        LOG.warn('Missing end of table')
+        LOG.warning('Missing end of table')
 
     return tables_
 
@@ -140,7 +140,7 @@ def table(output_lines):
             columns = _table_columns(line)
             continue
         if '|' not in line:
-            LOG.warn('skipping invalid table line: %s' % line)
+            LOG.warning('skipping invalid table line: %s' % line)
             continue
         row = []
         for col in columns:
