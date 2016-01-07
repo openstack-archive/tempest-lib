@@ -244,6 +244,7 @@ class TestRestClientParseRespJSON(BaseRestClientTestClass):
         keys[0]: values[0],
         keys[1]: values[1],
     }}
+    null_dict = {}
 
     def setUp(self):
         self.fake_http = fake_http.fake_httplib2()
@@ -272,6 +273,10 @@ class TestRestClientParseRespJSON(BaseRestClientTestClass):
         data = {"one_top_key": "not_list_or_dict_value"}
         body = self.rest_client._parse_resp(json.dumps(data))
         self.assertEqual(data, body)
+
+    def test_parse_nullable_dict(self):
+        body = self.rest_client._parse_resp(json.dumps(self.null_dict))
+        self.assertEqual(self.null_dict, body)
 
 
 class TestRestClientErrorCheckerJSON(base.TestCase):
