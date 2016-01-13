@@ -26,7 +26,7 @@ common_image_schema = {
         'status': {'type': 'string'},
         'updated': {'type': 'string'},
         'links': image_links,
-        'name': {'type': 'string'},
+        'name': {'type': ['string', 'null']},
         'created': {'type': 'string'},
         'minDisk': {'type': 'integer'},
         'minRam': {'type': 'integer'},
@@ -41,7 +41,7 @@ common_image_schema = {
             'additionalProperties': False,
             'required': ['id', 'links']
         },
-        'OS-EXT-IMG-SIZE:size': {'type': 'integer'},
+        'OS-EXT-IMG-SIZE:size': {'type': ['integer', 'null']},
         'OS-DCF:diskConfig': {'type': 'string'}
     },
     'additionalProperties': False,
