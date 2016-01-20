@@ -59,3 +59,22 @@ def idempotent_id(id):
             f.__doc__ = 'Test idempotent id: %s' % id
         return f
     return decorator
+
+
+class skip_unless_attr(object):
+    """Decorator to skip tests if a specified attr does not exists or False"""
+    def __init__(self, attr, msg=None):
+        self.attr = attr
+        self.message = msg or ("Test case attribute %s not found "
+                               "or False") % attr
+
+    def __call__(self, func):
+        def _skipper(*args, **kw):
+            """Wrapped skipper function."""
+            testobj = args[0]
+            if not getattr(testobj, self.attr, False):
+                raise testtools.TestCase.skipException(self.message)
+            func(*args, **kw)
+        _skipper.__name__ = func.__name__
+        _skipper.__doc__ = func.__doc__
+        return _skipper

@@ -95,3 +95,32 @@ class TestIdempotentIdDecorator(base.TestCase):
     def test_idempotent_id_not_valid_uuid(self):
         _id = '42'
         self.assertRaises(ValueError, self._test_helper, _id)
+
+
+class TestSkipUnlessAttrDecorator(base.TestCase):
+    def _test_skip_unless_attr(self, attr, expected_to_skip=True):
+        class TestFoo(test.BaseTestCase):
+            expected_attr = not expected_to_skip
+
+            @decorators.skip_unless_attr(attr)
+            def test_foo(self):
+                pass
+
+        t = TestFoo('test_foo')
+        if expected_to_skip:
+            self.assertRaises(testtools.TestCase.skipException,
+                              t.test_foo())
+        else:
+            try:
+                t.test_foo()
+            except Exception:
+                raise testtools.TestCase.failureException()
+
+    def test_skip_attr_does_not_exist(self):
+        self._test_skip_unless_attr('unexpected_attr')
+
+    def test_skip_attr_false(self):
+        self._test_skip_unless_attr('expected_attr')
+
+    def test_no_skip_for_attr_exist_and_true(self):
+        self._test_skip_unless_attr('expected_attr', expected_to_skip=False)
