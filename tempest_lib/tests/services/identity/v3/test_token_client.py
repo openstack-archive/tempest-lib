@@ -48,7 +48,7 @@ class TestTokenClientV2(base.TestCase):
                     }
                 },
             }
-        })
+        }, sort_keys=True)
         post_mock.mock.assert_called_once_with('fake_url/auth/tokens',
                                                body=req_dict)
 
@@ -76,7 +76,7 @@ class TestTokenClientV2(base.TestCase):
                     }
                 },
             }
-        })
+        }, sort_keys=True)
 
         post_mock.mock.assert_called_once_with('fake_url/auth/tokens',
                                                body=req_dict)
