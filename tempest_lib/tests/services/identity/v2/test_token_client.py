@@ -18,6 +18,7 @@ import httplib2
 from oslotest import mockpatch
 
 from tempest_lib.common import rest_client
+from tempest_lib import exceptions
 from tempest_lib.services.identity.v2 import token_client
 from tempest_lib.tests import base
 from tempest_lib.tests import fake_http
@@ -28,6 +29,10 @@ class TestTokenClientV2(base.TestCase):
     def setUp(self):
         super(TestTokenClientV2, self).setUp()
         self.fake_200_http = fake_http.fake_httplib2(return_type=200)
+
+    def test_init_without_authurl(self):
+        self.assertRaises(exceptions.IdentityError,
+                          token_client.TokenClient, None)
 
     def test_auth(self):
         token_client_v2 = token_client.TokenClient('fake_url')
