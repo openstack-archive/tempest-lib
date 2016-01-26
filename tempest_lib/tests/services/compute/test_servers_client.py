@@ -592,7 +592,7 @@ class TestServersClient(base.BaseComputeServiceTest):
             'tempest_lib.common.rest_client.RestClient.get',
             {'volumeAttachment': self.FAKE_COMMON_VOLUME},
             server_id=self.server_id,
-            attach_id='fake-attach-id'
+            volume_id=self.FAKE_COMMON_VOLUME['volumeId']
             )
 
     def test_list_volume_attachments_with_str_body(self):

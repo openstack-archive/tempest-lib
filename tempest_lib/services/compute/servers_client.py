@@ -319,10 +319,10 @@ class ServersClient(rest_client.RestClient):
         self.validate_response(schema.detach_volume, resp, body)
         return rest_client.ResponseBody(resp, body)
 
-    def show_volume_attachment(self, server_id, attach_id):
+    def show_volume_attachment(self, server_id, volume_id):
         """Return details about the given volume attachment."""
         resp, body = self.get('servers/%s/os-volume_attachments/%s' % (
-            server_id, attach_id))
+            server_id, volume_id))
         body = json.loads(body)
         self.validate_response(schema.show_volume_attachment, resp, body)
         return rest_client.ResponseBody(resp, body)
