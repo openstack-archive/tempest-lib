@@ -36,3 +36,12 @@ class NetworksClient(base.BaseNetworkClient):
     def list_networks(self, **filters):
         uri = '/networks'
         return self.list_resources(uri, **filters)
+
+    def create_bulk_networks(self, **kwargs):
+        """Create multiple networks in a single request.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-networking-v2.html#bulkCreateNetwork
+        """
+        uri = '/networks'
+        return self.create_resource(uri, kwargs)

@@ -36,3 +36,12 @@ class PortsClient(base.BaseNetworkClient):
     def list_ports(self, **filters):
         uri = '/ports'
         return self.list_resources(uri, **filters)
+
+    def create_bulk_ports(self, **kwargs):
+        """Create multiple ports in a single request.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-networking-v2.html#bulkCreatePorts
+        """
+        uri = '/ports'
+        return self.create_resource(uri, kwargs)
