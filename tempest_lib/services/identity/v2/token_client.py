@@ -50,7 +50,7 @@ class TokenClient(rest_client.RestClient):
         if tenant:
             creds['auth']['tenantName'] = tenant
 
-        body = json.dumps(creds)
+        body = json.dumps(creds, sort_keys=True)
         resp, body = self.post(self.auth_url, body=body)
         self.expected_success(200, resp.status)
 

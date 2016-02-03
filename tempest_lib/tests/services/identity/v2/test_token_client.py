@@ -48,7 +48,7 @@ class TestTokenClientV2(base.TestCase):
                     'password': 'fake_pass',
                 },
             }
-        })
+        }, sort_keys=True)
         post_mock.mock.assert_called_once_with('fake_url/tokens',
                                                body=req_dict)
 
@@ -67,7 +67,7 @@ class TestTokenClientV2(base.TestCase):
                     'password': 'fake_pass',
                 },
             }
-        })
+        }, sort_keys=True)
         post_mock.mock.assert_called_once_with('fake_url/tokens',
                                                body=req_dict)
 
