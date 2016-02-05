@@ -36,3 +36,12 @@ class SubnetsClient(base.BaseNetworkClient):
     def list_subnets(self, **filters):
         uri = '/subnets'
         return self.list_resources(uri, **filters)
+
+    def create_bulk_subnets(self, **kwargs):
+        """Create multiple subnets in a single request.
+
+        Available params: see http://developer.openstack.org/
+                              api-ref-networking-v2.html#bulkCreateSubnet
+        """
+        uri = '/subnets'
+        return self.create_resource(uri, kwargs)
