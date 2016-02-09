@@ -13,6 +13,7 @@
 
 
 from tempest_lib.cli import base as cli_base
+from tempest_lib import exceptions
 from tempest_lib.tests import base
 
 
@@ -29,3 +30,8 @@ class TestExecute(base.TestCase):
                                   fail_ok=True)
         self.assertIsInstance(result, str)
         self.assertIn("--foobar", result)
+
+    def test_execute_failure_raise_exception(self):
+        self.assertRaises(exceptions.CommandFailed, cli_base.execute,
+                          "/bin/ls", action="tempest_lib", flags="--foobar",
+                          merge_stderr=True)
