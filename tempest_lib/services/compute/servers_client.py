@@ -312,6 +312,15 @@ class ServersClient(rest_client.RestClient):
         self.validate_response(schema.attach_volume, resp, body)
         return rest_client.ResponseBody(resp, body)
 
+    def update_attached_volume(self, server_id, attachment_id, **kwargs):
+        """Swaps a volume attached to an instance for another volume"""
+        post_body = json.dumps({'volumeAttachment': kwargs})
+        resp, body = self.put('servers/%s/os-volume_attachments/%s' %
+                              (server_id, attachment_id),
+                              post_body)
+        self.validate_response(schema.update_attached_volume, resp, body)
+        return rest_client.ResponseBody(resp, body)
+
     def detach_volume(self, server_id, volume_id):  # noqa
         """Detaches a volume from a server instance."""
         resp, body = self.delete('servers/%s/os-volume_attachments/%s' %
