@@ -105,10 +105,10 @@ class V3TokenClient(rest_client.RestClient):
             elif project_name:
                 _project['name'] = project_name
 
-                if project_domain_id is not None:
-                    _project['domain'] = {'id': project_domain_id}
-                elif project_domain_name is not None:
-                    _project['domain'] = {'name': project_domain_name}
+            if project_domain_id is not None:
+                _project['domain'] = {'id': project_domain_id}
+            elif project_domain_name is not None:
+                _project['domain'] = {'name': project_domain_name}
 
             creds['auth']['scope'] = dict(project=_project)
         elif domain_id:
