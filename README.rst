@@ -12,6 +12,12 @@ OpenStack Functional Testing Library
 tempest-lib is a library of common functionality that was originally in tempest
 (or similar in scope to tempest)
 
+**As of the 1.0.0 release tempest-lib as a separate repository and project is
+deprecated. The library now exists as part of the tempest project, all future
+development will occur there. To use the library for future releases update
+your imports from tempest_lib to tempest.lib, and add tempest>=10 to your
+project requirements**
+
 Features
 --------
 
