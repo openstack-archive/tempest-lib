@@ -1,7 +1,0 @@
-[run]
-branch = True
-source = tempest_lib
-omit = tempest_lib/tests/*,tempest_lib/openstack/*
-
-[report]
-ignore_errors = True

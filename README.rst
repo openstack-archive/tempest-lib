@@ -1,33 +1,17 @@
-===========
-tempest-lib
-===========
+This project is no longer maintained.
 
-OpenStack Functional Testing Library
+The contents of this repository are still available in the Git
+source code management system.  To see the contents of this
+repository before it reached its end of life, please check out the
+previous commit with "git checkout HEAD^1".
 
-* Free software: Apache license
-* Documentation: http://docs.openstack.org/developer/tempest-lib
-* Source: http://git.openstack.org/cgit/openstack/tempest-lib
-* Bugs: http://bugs.launchpad.net/tempest
+As of the 1.0.0 release tempest-lib as a separate repository and project
+is deprecated. The library now exists as part of the tempest project, all
+future development will occur there. To use the library for future releases
+update your imports from tempest_lib to tempest.lib, and add tempest>=10
+to your project requirements.
 
-tempest-lib is a library of common functionality that was originally in tempest
-(or similar in scope to tempest)
 
-**As of the 1.0.0 release tempest-lib as a separate repository and project is
-deprecated. The library now exists as part of the tempest project, all future
-development will occur there. To use the library for future releases update
-your imports from tempest_lib to tempest.lib, and add tempest>=10 to your
-project requirements**
-
-Features
---------
-
-Some of the current functionality exposed from the library includes:
-
-* OpenStack python-* client CLI testing framework
-* subunit-trace: A output filter for subunit streams. Useful in conjunction
-                 with calling a test runner that emits subunit
-* A unified REST Client
-* Utility functions:
-  * skip_because: Skip a test because of a bug
-  * find_test_caller: Perform stack introspection to find the test caller.
-                      common methods
+For any further questions, please email
+openstack-discuss@lists.openstack.org or join #openstack-dev on
+OFTC.
